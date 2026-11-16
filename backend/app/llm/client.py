@@ -8,15 +8,23 @@
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, TypeVar
 
 import anthropic
+from pydantic import BaseModel, ValidationError
 
 from app.config import Settings, get_settings
+from app.llm.schemas import strict_json_schema
 
 logger = logging.getLogger(__name__)
 
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
+
+T = TypeVar("T", bound=BaseModel)
+
+
+class LLMOutputError(Exception):
+    """The model answered, but the answer can't be used (refusal, truncation, invalid JSON/schema)."""
 
 
 @dataclass
@@ -75,3 +83,36 @@ class LLMClient:
             record.output_tokens, record.duration_s, record.stop_reason,
         )
         return response
+
+    def create_structured(
+        self,
+        operation: str,
+        output_model: type[T],
+        system: str,
+        messages: list[dict[str, Any]],
+        **kwargs: Any,
+    ) -> T:
+        """Requests JSON constrained to `output_model`'s schema and validates it in code.
+
+        Structured outputs make invalid JSON unlikely, but we never trust the model blindly:
+        refusals, truncated answers and schema mismatches all raise LLMOutputError.
+        """
+        response = self.create_message(
+            operation,
+            system=system,
+            messages=messages,
+            output_config={"format": {"type": "json_schema", "schema": strict_json_schema(output_model)}},
+            **kwargs,
+        )
+
+        if response.stop_reason == "refusal":
+            raise LLMOutputError("O modelo recusou o pedido.")
+        if response.stop_reason == "max_tokens":
+            raise LLMOutputError("A resposta do modelo foi cortada (limite de tokens).")
+
+        text = "".join(block.text for block in response.content if getattr(block, "type", None) == "text")
+        try:
+            return output_model.model_validate_json(text)
+        except ValidationError as exc:
+            logger.warning("invalid LLM output op=%s: %s", operation, exc)
+            raise LLMOutputError("O modelo devolveu uma resposta fora do formato esperado.") from exc

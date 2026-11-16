@@ -5,6 +5,7 @@ PROGRESSO.md
 # Segredos
 .env
 .env.*
+*.env
 !.env.example
 
 # Dados locais: banco SQLite e uploads (currículo real)

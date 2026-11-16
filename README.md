@@ -2,7 +2,7 @@
 
 Assistente pessoal de candidaturas a vagas: lê o seu currículo, extrai os requisitos das vagas, analisa a compatibilidade e gera textos para processos seletivos usando a API da Anthropic (Claude). A IA não pode inventar experiência ou skill: tudo o que ela gera é conferido contra o seu perfil.
 
-> **Status:** em desenvolvimento. A base do backend (Etapa 1) está pronta. As funcionalidades de IA ainda estão sendo implementadas, conforme o roteiro abaixo.
+> **Status:** em desenvolvimento. A base do backend (Etapa 1) e o perfil a partir do currículo (Etapa 2) estão prontos. As funcionalidades de IA ainda estão sendo implementadas, conforme o roteiro abaixo.
 
 ---
 
@@ -21,7 +21,7 @@ Assistente pessoal de candidaturas a vagas: lê o seu currículo, extrai os requ
 | Etapa | O que entrega | Status |
 |---|---|---|
 | 1. Base do backend | API FastAPI, banco SQLite, cliente do Claude | ✅ Pronta |
-| 2. Perfil | Upload do currículo em PDF → perfil estruturado, revisado pelo usuário | ⏳ |
+| 2. Perfil | Upload do currículo em PDF → perfil estruturado, revisado pelo usuário | ✅ Pronta |
 | 3. Vagas | Texto da vaga → empresa, cargo, requisitos, stack, senioridade | ⏳ |
 | 4. Análise | Requisito por requisito: atende, parcial ou não atende, com evidência verificada em código | ⏳ |
 | 5. Textos | Resumo, carta e respostas, com espaços `[PREENCHER]` em vez de inventar | ⏳ |
@@ -60,6 +60,18 @@ Esta seção descreve só o que já existe no código e é atualizada a cada eta
    - opcionalmente liga o *fallback* do servidor (`ANTHROPIC_FALLBACKS=default`): se o modelo recusar um pedido, a API refaz o pedido em outro modelo.
 5. **API** ([backend/app/main.py](backend/app/main.py)): FastAPI com `GET /health`.
 6. **Testes** ([backend/tests/](backend/tests/)): banco em memória e Claude mockado. Cobrem o `/health`, a persistência dos modelos, o histórico de status, a exclusão em cascata e o registro de uso do cliente do Claude.
+
+### Etapa 2: perfil a partir do currículo
+
+1. **Schema do perfil** ([backend/app/llm/schemas.py](backend/app/llm/schemas.py)): o modelo Pydantic `ProfileData` define resumo, experiências (cargo, empresa, período, atividades), skills por categoria, projetos, formação, certificações e idiomas. Campos ausentes no currículo ficam `null` ou como lista vazia, para que o modelo não seja obrigado a inventar um valor.
+2. **Saída estruturada com validação em código** ([backend/app/llm/client.py](backend/app/llm/client.py)): o método `create_structured` gera o JSON Schema a partir do modelo Pydantic e o envia em `output_config.format`, o que restringe a resposta do Claude a esse formato. A resposta é validada de novo com Pydantic. Recusa do modelo, resposta cortada por limite de tokens, JSON inválido ou campos fora do schema viram um erro claro (`LLMOutputError`), e nada inválido chega ao banco.
+3. **Prompt em arquivo próprio** ([backend/app/llm/prompts/extract_profile.md](backend/app/llm/prompts/extract_profile.md)): proíbe deduzir, completar ou enfeitar informações. Por exemplo, não adiciona "Git" só porque a pessoa usou GitHub. Também não extrai dados de contato.
+4. **Leitura do PDF** ([backend/app/pdf.py](backend/app/pdf.py)): extrai o texto com pypdf. Um PDF sem texto selecionável (currículo escaneado) ou corrompido gera uma mensagem de erro explicando o motivo.
+5. **Endpoints** ([backend/app/routers/profile.py](backend/app/routers/profile.py)):
+   - `POST /profile/upload`: recebe o PDF (até 5 MB) e devolve o perfil extraído e o texto original **sem salvar**.
+   - `PUT /profile`: salva o perfil depois que o usuário revisa. Cada vez que salva, a versão sobe (as análises das próximas etapas registram qual versão usaram).
+   - `GET /profile`: devolve o perfil atual.
+6. **Testes**: upload com sucesso sem salvar nada, resposta inválida do modelo (JSON quebrado, fora do schema, cortada, recusa), arquivo que não é PDF, PDF sem texto, versionamento no `PUT` e rejeição de perfil inválido.
 
 ---
 
@@ -159,6 +171,16 @@ pytest
 
 Os testes não precisam de chave de API: usam banco em memória e Claude mockado.
 
+### 7. Usar: criar o seu perfil
+
+1. Abra http://localhost:8000/docs.
+2. Em `POST /profile/upload`, clique em **Try it out**, escolha o PDF do currículo e execute. A resposta traz o perfil extraído (`data`) e o texto lido do PDF (`raw_text`).
+3. Revise o `data`: corrija o que estiver errado e apague o que não for verdade.
+4. Em `PUT /profile`, envie `{"data": <perfil revisado>, "raw_text": <texto>}` para salvar.
+5. `GET /profile` mostra o perfil salvo e a versão atual.
+
+> Até a interface ficar pronta (Etapa 6), a revisão é feita por essa página de documentação.
+
 ### Problemas comuns
 
 - **`ModuleNotFoundError`:** o ambiente virtual não está ativado ou você não está dentro de `backend/`.
@@ -177,8 +199,12 @@ job-copilot/
 │   │   ├── config.py        # configuração via .env
 │   │   ├── database.py      # conexão SQLite / SQLAlchemy
 │   │   ├── models.py        # tabelas do banco
+│   │   ├── schemas.py       # formatos de entrada/saída da API
+│   │   ├── pdf.py           # extração de texto do PDF
+│   │   ├── routers/         # endpoints (profile, ...)
 │   │   └── llm/
-│   │       ├── client.py    # cliente do Claude (tokens e tempo de cada chamada)
+│   │       ├── client.py    # cliente do Claude (saída estruturada, tokens e tempo)
+│   │       ├── schemas.py   # schemas Pydantic das respostas da IA
 │   │       └── prompts/     # prompts em arquivos próprios
 │   ├── tests/               # testes (pytest)
 │   ├── requirements.txt
