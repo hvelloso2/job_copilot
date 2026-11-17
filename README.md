@@ -2,7 +2,7 @@
 
 Assistente pessoal de candidaturas a vagas: lê o seu currículo, extrai os requisitos das vagas, analisa a compatibilidade e gera textos para processos seletivos usando a API da Anthropic (Claude). A IA não pode inventar experiência ou skill: tudo o que ela gera é conferido contra o seu perfil.
 
-> **Status:** em desenvolvimento. A base do backend (Etapa 1) e o perfil a partir do currículo (Etapa 2) estão prontos. As funcionalidades de IA ainda estão sendo implementadas, conforme o roteiro abaixo.
+> **Status:** em desenvolvimento. A base do backend (Etapa 1), o perfil a partir do currículo (Etapa 2) e a extração de vagas (Etapa 3) estão prontos. As funcionalidades de IA ainda estão sendo implementadas, conforme o roteiro abaixo.
 
 ---
 
@@ -22,7 +22,7 @@ Assistente pessoal de candidaturas a vagas: lê o seu currículo, extrai os requ
 |---|---|---|
 | 1. Base do backend | API FastAPI, banco SQLite, cliente do Claude | ✅ Pronta |
 | 2. Perfil | Upload do currículo em PDF → perfil estruturado, revisado pelo usuário | ✅ Pronta |
-| 3. Vagas | Texto da vaga → empresa, cargo, requisitos, stack, senioridade | ⏳ |
+| 3. Vagas | Texto da vaga → empresa, cargo, requisitos, stack, senioridade | ✅ Pronta |
 | 4. Análise | Requisito por requisito: atende, parcial ou não atende, com evidência verificada em código | ⏳ |
 | 5. Textos | Resumo, carta e respostas, com espaços `[PREENCHER]` em vez de inventar | ⏳ |
 | 6. Interface | React + kanban das candidaturas | ⏳ |
@@ -72,6 +72,19 @@ Esta seção descreve só o que já existe no código e é atualizada a cada eta
    - `PUT /profile`: salva o perfil depois que o usuário revisa. Cada vez que salva, a versão sobe (as análises das próximas etapas registram qual versão usaram).
    - `GET /profile`: devolve o perfil atual.
 6. **Testes**: upload com sucesso sem salvar nada, resposta inválida do modelo (JSON quebrado, fora do schema, cortada, recusa), arquivo que não é PDF, PDF sem texto, versionamento no `PUT` e rejeição de perfil inválido.
+
+### Etapa 3: extração de vagas
+
+1. **Schema da vaga** ([backend/app/llm/schemas.py](backend/app/llm/schemas.py)): `JobData` tem empresa, cargo, senioridade, modalidade (`remote`, `hybrid` ou `onsite`), local, requisitos obrigatórios, requisitos desejáveis, tecnologias, responsabilidades, benefícios e salário. O Claude devolve um `JobExtraction` com uma lista de **trilhas**: uma vaga comum tem uma trilha só; uma vaga que oferece vários perfis (por exemplo "AI Engineer" e "AI Builder") tem uma trilha para cada, com seus próprios requisitos.
+2. **Prompt** ([backend/app/llm/prompts/extract_job.md](backend/app/llm/prompts/extract_job.md)): um requisito por item, curto, separando itens compostos ("Python e Django" vira dois). Mantém números como estão escritos e não deduz senioridade, modalidade ou tecnologias que a vaga não cita.
+3. **Limpeza em código**: as listas são normalizadas depois da validação (espaços extras, itens vazios e duplicados removidos). Uma resposta sem nenhuma trilha ou com modalidade fora das três opções é rejeitada.
+4. **Endpoints** ([backend/app/routers/jobs.py](backend/app/routers/jobs.py)):
+   - `POST /jobs`: recebe o texto colado da vaga e um link opcional (só guardado), extrai com o Claude e salva a vaga junto com a candidatura no status `saved` (salva).
+   - `GET /jobs`: lista as vagas, da mais recente para a mais antiga, com filtro opcional `?status=`.
+   - `GET /jobs/{id}`: vaga completa, com o texto original, as trilhas e o histórico de status.
+   - `PUT /jobs/{id}/track`: escolhe qual trilha acompanhar quando a vaga tem mais de uma. Com uma trilha só, ela já vem escolhida; com várias, a vaga fica marcada com `needs_track_choice: true` até a escolha.
+5. **Erros da IA** ([backend/app/dependencies.py](backend/app/dependencies.py)): a tradução de erros do Claude (resposta inválida, falha de conexão, erro da API) em respostas HTTP agora fica num só lugar, usada pelo perfil e pelas vagas.
+6. **Testes**: criação com candidatura em `saved`, limpeza dos requisitos, vaga com duas trilhas e escolha da trilha, trilha inexistente, resposta inválida do modelo (nada é salvo), resposta sem trilhas, modalidade inválida, texto vazio (o Claude nem é chamado), filtro por status e vaga inexistente.
 
 ---
 
@@ -181,6 +194,13 @@ Os testes não precisam de chave de API: usam banco em memória e Claude mockado
 
 > Até a interface ficar pronta (Etapa 6), a revisão é feita por essa página de documentação.
 
+### 8. Usar: cadastrar uma vaga
+
+1. Em http://localhost:8000/docs, abra `POST /jobs` e envie `{"text": "<texto da vaga colado>", "url": "<link opcional>"}`.
+2. Confira na resposta se os requisitos (`required_requirements` e `preferred_requirements`) saíram separados e corretos.
+3. Se a vaga tiver várias trilhas (`needs_track_choice: true`), escolha uma em `PUT /jobs/{id}/track` com `{"track": <índice>}` (a primeira é `0`).
+4. `GET /jobs` lista as vagas; `GET /jobs?status=saved` filtra pelo status da candidatura.
+
 ### Problemas comuns
 
 - **`ModuleNotFoundError`:** o ambiente virtual não está ativado ou você não está dentro de `backend/`.
@@ -201,7 +221,7 @@ job-copilot/
 │   │   ├── models.py        # tabelas do banco
 │   │   ├── schemas.py       # formatos de entrada/saída da API
 │   │   ├── pdf.py           # extração de texto do PDF
-│   │   ├── routers/         # endpoints (profile, ...)
+│   │   ├── routers/         # endpoints (profile, jobs)
 │   │   └── llm/
 │   │       ├── client.py    # cliente do Claude (saída estruturada, tokens e tempo)
 │   │       ├── schemas.py   # schemas Pydantic das respostas da IA

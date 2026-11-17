@@ -4,9 +4,9 @@ The JSON Schema sent to the API is generated from these models (see `strict_json
 and every response is validated against the same model in code.
 """
 
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class _Strict(BaseModel):
@@ -57,6 +57,53 @@ class ProfileData(_Strict):
     education: list[Education] = Field(default_factory=list)
     certifications: list[Certification] = Field(default_factory=list)
     languages: list[Language] = Field(default_factory=list)
+
+
+WorkMode = Literal["remote", "hybrid", "onsite"]
+
+
+class JobData(_Strict):
+    """One job posting (or one track of a posting that offers several)."""
+
+    company: str | None = None
+    title: str
+    seniority: str | None = None
+    work_mode: WorkMode | None = None
+    location: str | None = None
+    required_requirements: list[str] = Field(default_factory=list)
+    preferred_requirements: list[str] = Field(default_factory=list)
+    technologies: list[str] = Field(default_factory=list)
+    responsibilities: list[str] = Field(default_factory=list)
+    benefits: list[str] = Field(default_factory=list)
+    salary: str | None = None
+
+    @field_validator(
+        "required_requirements", "preferred_requirements", "technologies", "responsibilities", "benefits"
+    )
+    @classmethod
+    def _clean_items(cls, items: list[str]) -> list[str]:
+        """Strips whitespace, drops empty items and case-insensitive duplicates (keeps order)."""
+        seen: set[str] = set()
+        cleaned = []
+        for item in items:
+            item = " ".join(item.split())
+            if item and item.casefold() not in seen:
+                seen.add(item.casefold())
+                cleaned.append(item)
+        return cleaned
+
+
+class JobExtraction(_Strict):
+    """What the model returns for a pasted job posting: one item per track."""
+
+    tracks: list[JobData]
+
+    @field_validator("tracks")
+    @classmethod
+    def _at_least_one(cls, tracks: list[JobData]) -> list[JobData]:
+        if not tracks:
+            raise ValueError("a job posting must have at least one track")
+        return tracks
 
 
 def strict_json_schema(model: type[BaseModel]) -> dict[str, Any]:

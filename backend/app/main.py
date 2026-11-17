@@ -6,7 +6,7 @@ from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
 
 from app.database import init_db
-from app.routers import profile
+from app.routers import jobs, profile
 
 
 @asynccontextmanager
@@ -19,6 +19,7 @@ logger = logging.getLogger("uvicorn.error")
 
 app = FastAPI(title="job-copilot", lifespan=lifespan)
 app.include_router(profile.router)
+app.include_router(jobs.router)
 
 
 @app.exception_handler(RequestValidationError)

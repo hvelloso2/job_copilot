@@ -1,11 +1,10 @@
-import anthropic
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.dependencies import get_llm_client
-from app.llm.client import LLMClient, LLMOutputError
+from app.dependencies import get_llm_client, llm_errors_as_http
+from app.llm.client import LLMClient
 from app.llm.prompts import load_prompt
 from app.llm.schemas import ProfileData
 from app.models import Profile
@@ -35,19 +34,13 @@ async def upload_profile(file: UploadFile, llm: LLMClient = Depends(get_llm_clie
     except PdfError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
-    try:
+    with llm_errors_as_http():
         data = llm.create_structured(
             "extract_profile",
             ProfileData,
             system=load_prompt("extract_profile"),
             messages=[{"role": "user", "content": f"<curriculo>\n{raw_text}\n</curriculo>"}],
         )
-    except LLMOutputError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
-    except anthropic.APIConnectionError as exc:
-        raise HTTPException(status_code=503, detail="Não foi possível conectar à API da Anthropic.") from exc
-    except anthropic.APIStatusError as exc:
-        raise HTTPException(status_code=502, detail=f"Erro da API da Anthropic: {exc.message}") from exc
 
     return ProfileDraft(data=data, raw_text=raw_text)
 
