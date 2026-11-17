@@ -161,3 +161,48 @@ def test_list_jobs_filters_by_status(api, db) -> None:
 
 def test_get_job_not_found(api) -> None:
     assert api.get("/jobs/999").status_code == 404
+
+
+def test_update_application_status_and_notes(api) -> None:
+    job_id = create(api).json()["id"]
+    before = api.get("/jobs").json()[0]["updated_at"]
+
+    moved = api.patch(f"/jobs/{job_id}/application", json={"status": "applied"})
+
+    assert moved.status_code == 200
+    assert moved.json()["status"] == "applied"
+    assert [h["status"] for h in moved.json()["status_history"]] == ["saved", "applied"]
+    assert api.get("/jobs").json()[0]["updated_at"] >= before
+
+    noted = api.patch(f"/jobs/{job_id}/application", json={"notes": "Entrevista marcada"}).json()
+    assert noted["notes"] == "Entrevista marcada"
+    assert noted["status"] == "applied"  # unchanged
+    # same status again does not add to the history
+    again = api.patch(f"/jobs/{job_id}/application", json={"status": "applied"}).json()
+    assert len(again["status_history"]) == 2
+
+    assert api.patch(f"/jobs/{job_id}/application", json={"status": "contratado"}).status_code == 422
+    assert api.patch("/jobs/999/application", json={"status": "applied"}).status_code == 404
+
+
+def test_list_shows_latest_analysis_score(api, db) -> None:
+    from app.models import Analysis, Job
+
+    job_id = create(api).json()["id"]
+    assert api.get("/jobs").json()[0]["score"] is None
+
+    job = db.get(Job, job_id)
+    job.analyses.append(Analysis(profile_version=1, result={"score": 40}))
+    job.analyses.append(Analysis(profile_version=1, result={"score": 76}))
+    db.commit()
+
+    assert api.get("/jobs").json()[0]["score"] == 76
+
+
+def test_delete_job(api) -> None:
+    job_id = create(api).json()["id"]
+
+    assert api.delete(f"/jobs/{job_id}").status_code == 204
+    assert api.get(f"/jobs/{job_id}").status_code == 404
+    assert api.get("/jobs").json() == []
+    assert api.delete(f"/jobs/{job_id}").status_code == 404

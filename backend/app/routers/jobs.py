@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.database import get_db
 from app.dependencies import get_llm_client, llm_errors_as_http
@@ -8,7 +8,8 @@ from app.llm.client import LLMClient
 from app.llm.prompts import load_prompt
 from app.llm.schemas import JobData, JobExtraction
 from app.models import Application, ApplicationStatus, Job
-from app.schemas import JobCreate, JobOut, JobSummary, TrackChoice
+from app.queries import get_job_or_404
+from app.schemas import ApplicationUpdate, JobCreate, JobOut, JobSummary, TrackChoice
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
@@ -27,6 +28,12 @@ def _apply_track(job: Job, index: int | None) -> None:
         job.title = " | ".join(t.title for t in tracks)
 
 
+def _latest_score(job: Job) -> int | None:
+    if not job.analyses:
+        return None
+    return max(job.analyses, key=lambda a: a.id).result.get("score")
+
+
 def _summary_fields(job: Job) -> dict:
     return {
         "id": job.id,
@@ -34,7 +41,9 @@ def _summary_fields(job: Job) -> dict:
         "title": job.title,
         "status": job.application.status,
         "needs_track_choice": job.extracted.get("selected_track") is None,
+        "score": _latest_score(job),
         "created_at": job.created_at,
+        "updated_at": job.application.updated_at,
     }
 
 
@@ -46,14 +55,8 @@ def _to_out(job: Job) -> JobOut:
         tracks=job.extracted["tracks"],
         selected_track=job.extracted.get("selected_track"),
         status_history=job.application.status_history or [],
+        notes=job.application.notes or "",
     )
-
-
-def _get_job(db: Session, job_id: int) -> Job:
-    job = db.get(Job, job_id)
-    if job is None:
-        raise HTTPException(status_code=404, detail="Vaga não encontrada.")
-    return job
 
 
 @router.post("", response_model=JobOut, status_code=201)
@@ -90,7 +93,7 @@ def create_job(
 @router.get("", response_model=list[JobSummary])
 def list_jobs(status: ApplicationStatus | None = None, db: Session = Depends(get_db)) -> list[JobSummary]:
     """Lists jobs, most recent first. `status` filters by the application status."""
-    query = select(Job).join(Job.application).options(joinedload(Job.application))
+    query = select(Job).join(Job.application).options(joinedload(Job.application), selectinload(Job.analyses))
     if status is not None:
         query = query.where(Application.status == status)
     jobs = db.scalars(query.order_by(Job.created_at.desc(), Job.id.desc())).all()
@@ -99,16 +102,38 @@ def list_jobs(status: ApplicationStatus | None = None, db: Session = Depends(get
 
 @router.get("/{job_id}", response_model=JobOut)
 def get_job(job_id: int, db: Session = Depends(get_db)) -> JobOut:
-    return _to_out(_get_job(db, job_id))
+    return _to_out(get_job_or_404(db, job_id))
 
 
 @router.put("/{job_id}/track", response_model=JobOut)
 def choose_track(job_id: int, payload: TrackChoice, db: Session = Depends(get_db)) -> JobOut:
     """Chooses which track of a multi-track posting to follow (used by the analysis and texts)."""
-    job = _get_job(db, job_id)
+    job = get_job_or_404(db, job_id)
     if payload.track >= len(job.extracted["tracks"]):
         raise HTTPException(status_code=422, detail="Essa trilha não existe nesta vaga.")
     _apply_track(job, payload.track)
     db.commit()
     db.refresh(job)
     return _to_out(job)
+
+
+@router.patch("/{job_id}/application", response_model=JobOut)
+def update_application(job_id: int, payload: ApplicationUpdate, db: Session = Depends(get_db)) -> JobOut:
+    """Moves the application to another status (kanban) and/or saves the notes."""
+    job = get_job_or_404(db, job_id)
+    application = job.application
+    if payload.status is not None and payload.status != application.status:
+        application.set_status(payload.status)
+    if payload.notes is not None:
+        application.notes = payload.notes
+    db.commit()
+    db.refresh(job)
+    return _to_out(job)
+
+
+@router.delete("/{job_id}", status_code=204)
+def delete_job(job_id: int, db: Session = Depends(get_db)) -> Response:
+    """Deletes the job with its application, analyses and texts (e.g. a wrong extraction)."""
+    db.delete(get_job_or_404(db, job_id))
+    db.commit()
+    return Response(status_code=204)

@@ -106,6 +106,56 @@ class JobExtraction(_Strict):
         return tracks
 
 
+RequirementStatus = Literal["meets", "partial", "missing"]
+
+
+class RequirementAssessment(_Strict):
+    # evidence and explanation come before status so the model reasons before deciding
+    requirement_id: str
+    evidence: str | None = None
+    explanation: str
+    status: RequirementStatus
+
+
+class Strength(_Strict):
+    point: str
+    evidence: str
+
+
+class ResumeSuggestion(_Strict):
+    original: str
+    suggested: str
+    reason: str
+    skills_mentioned: list[str] = Field(default_factory=list)
+
+
+class JobAnalysis(_Strict):
+    """What the model returns when comparing the profile with one job track. Verified in code."""
+
+    requirements: list[RequirementAssessment]
+    strengths: list[Strength] = Field(default_factory=list)
+    gaps: list[str] = Field(default_factory=list)
+    resume_suggestions: list[ResumeSuggestion] = Field(default_factory=list)
+    study_plan: list[str] = Field(default_factory=list)
+
+
+class TextDraft(_Strict):
+    """A text generated for the hiring process (summary, cover letter or answer)."""
+
+    text: str
+
+
+class Claim(_Strict):
+    claim: str
+    evidence: str | None = None
+
+
+class ClaimList(_Strict):
+    """Statements about the candidate found in a generated text. Verified in code."""
+
+    claims: list[Claim]
+
+
 def strict_json_schema(model: type[BaseModel]) -> dict[str, Any]:
     """JSON Schema for structured outputs: every object closed and every property required.
 

@@ -27,6 +27,11 @@ class TextType(str, enum.Enum):
     ANSWER = "answer"          # resposta
 
 
+class TextFormat(str, enum.Enum):
+    WRITTEN = "written"            # texto escrito
+    AUDIO_SCRIPT = "audio_script"  # roteiro para áudio
+
+
 class Profile(Base):
     __tablename__ = "profiles"
 
@@ -95,6 +100,9 @@ class GeneratedText(Base):
     type: Mapped[TextType] = mapped_column(Enum(TextType))
     question: Mapped[str | None] = mapped_column(Text, nullable=True)
     text: Mapped[str] = mapped_column(Text)
+    # Added in Etapa 5 (nullable, so add_missing_columns can add them to an existing database)
+    format: Mapped[TextFormat | None] = mapped_column(Enum(TextFormat), nullable=True)
+    details: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)  # verification result
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     job: Mapped[Job] = relationship(back_populates="generated_texts")

@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -9,15 +8,12 @@ from app.llm.prompts import load_prompt
 from app.llm.schemas import ProfileData
 from app.models import Profile
 from app.pdf import PdfError, extract_pdf_text
+from app.queries import current_profile
 from app.schemas import ProfileDraft, ProfileOut, ProfileSave
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
-
-
-def _current_profile(db: Session) -> Profile | None:
-    return db.scalars(select(Profile).order_by(Profile.id).limit(1)).first()
 
 
 @router.post("/upload", response_model=ProfileDraft)
@@ -48,7 +44,7 @@ async def upload_profile(file: UploadFile, llm: LLMClient = Depends(get_llm_clie
 @router.put("", response_model=ProfileOut)
 def save_profile(payload: ProfileSave, db: Session = Depends(get_db)) -> ProfileOut:
     """Saves the reviewed profile. Each save creates a new version (analyses record which one they used)."""
-    profile = _current_profile(db)
+    profile = current_profile(db)
     if profile is None:
         profile = Profile(version=1)
         db.add(profile)
@@ -64,7 +60,7 @@ def save_profile(payload: ProfileSave, db: Session = Depends(get_db)) -> Profile
 
 @router.get("", response_model=ProfileOut)
 def get_profile(db: Session = Depends(get_db)) -> ProfileOut:
-    profile = _current_profile(db)
+    profile = current_profile(db)
     if profile is None:
         raise HTTPException(status_code=404, detail="Nenhum perfil salvo ainda.")
     return ProfileOut(data=profile.data, raw_text=profile.raw_text,

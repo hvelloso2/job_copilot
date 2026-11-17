@@ -2,7 +2,7 @@
 
 Assistente pessoal de candidaturas a vagas: lê o seu currículo, extrai os requisitos das vagas, analisa a compatibilidade e gera textos para processos seletivos usando a API da Anthropic (Claude). A IA não pode inventar experiência ou skill: tudo o que ela gera é conferido contra o seu perfil.
 
-> **Status:** em desenvolvimento. A base do backend (Etapa 1), o perfil a partir do currículo (Etapa 2) e a extração de vagas (Etapa 3) estão prontos. As funcionalidades de IA ainda estão sendo implementadas, conforme o roteiro abaixo.
+> **Status:** em desenvolvimento. A base do backend (Etapa 1), o perfil a partir do currículo (Etapa 2), a extração de vagas (Etapa 3), a análise de compatibilidade (Etapa 4), os textos para o processo seletivo (Etapa 5) e a interface (Etapa 6) estão prontos. Faltam o painel de skills e a avaliação da IA, conforme o roteiro abaixo.
 
 ---
 
@@ -23,13 +23,13 @@ Assistente pessoal de candidaturas a vagas: lê o seu currículo, extrai os requ
 | 1. Base do backend | API FastAPI, banco SQLite, cliente do Claude | ✅ Pronta |
 | 2. Perfil | Upload do currículo em PDF → perfil estruturado, revisado pelo usuário | ✅ Pronta |
 | 3. Vagas | Texto da vaga → empresa, cargo, requisitos, stack, senioridade | ✅ Pronta |
-| 4. Análise | Requisito por requisito: atende, parcial ou não atende, com evidência verificada em código | ⏳ |
-| 5. Textos | Resumo, carta e respostas, com espaços `[PREENCHER]` em vez de inventar | ⏳ |
-| 6. Interface | React + kanban das candidaturas | ⏳ |
+| 4. Análise | Requisito por requisito: atende, parcial ou não atende, com evidência verificada em código | ✅ Pronta |
+| 5. Textos | Resumo, carta e respostas, com espaços `[PREENCHER]` em vez de inventar | ✅ Pronta |
+| 6. Interface | React + kanban das candidaturas | ✅ Pronta |
 | 7. Painel | Skills mais pedidas e lacunas do perfil | ⏳ |
 | 8. Avaliação | Métricas de qualidade e custo da IA | ⏳ |
 
-**Stack:** Python, FastAPI, SQLAlchemy + SQLite, SDK `anthropic`, pypdf, pytest. Frontend (a partir da Etapa 6): React, TypeScript, Vite, TailwindCSS, shadcn/ui, Zustand e dnd-kit.
+**Stack:** backend em Python, FastAPI, SQLAlchemy + SQLite, SDK `anthropic`, pypdf e pytest. Frontend em React, TypeScript, Vite, TailwindCSS, shadcn/ui, Zustand, dnd-kit e Vitest.
 
 ---
 
@@ -86,6 +86,51 @@ Esta seção descreve só o que já existe no código e é atualizada a cada eta
 5. **Erros da IA** ([backend/app/dependencies.py](backend/app/dependencies.py)): a tradução de erros do Claude (resposta inválida, falha de conexão, erro da API) em respostas HTTP agora fica num só lugar, usada pelo perfil e pelas vagas.
 6. **Testes**: criação com candidatura em `saved`, limpeza dos requisitos, vaga com duas trilhas e escolha da trilha, trilha inexistente, resposta inválida do modelo (nada é salvo), resposta sem trilhas, modalidade inválida, texto vazio (o Claude nem é chamado), filtro por status e vaga inexistente.
 
+### Etapa 4: análise de compatibilidade com verificação
+
+1. **O que vai para o Claude** ([backend/app/routers/analysis.py](backend/app/routers/analysis.py)): o perfil salvo (o revisado, não o texto bruto do currículo) e os requisitos da trilha escolhida, cada um com um id (`R1`, `R2`... obrigatórios; `P1`... desejáveis). O texto dos requisitos vem do banco, não da resposta do modelo, então o modelo não consegue alterar um requisito.
+2. **O que o Claude devolve** ([backend/app/llm/schemas.py](backend/app/llm/schemas.py), prompt em [analyze_job.md](backend/app/llm/prompts/analyze_job.md)): para cada requisito, o status (`meets`, `partial`, `missing`), um trecho **copiado literalmente** do perfil como evidência e uma explicação curta. Também devolve pontos fortes (cada um com evidência), lacunas, sugestões de ajuste no currículo e o que estudar. No schema, a evidência e a explicação vêm antes do status, para o modelo justificar antes de decidir.
+3. **Verificação em código** ([backend/app/analysis.py](backend/app/analysis.py)). O código não confia na resposta do modelo:
+   - **Evidência:** precisa existir dentro de um mesmo campo do perfil (ignorando maiúsculas, espaços e tipo de aspas). Se não existir, o requisito é rebaixado para `missing` com a nota "Evidência não encontrada no perfil". O status original do modelo fica guardado em `model_status`, para auditoria e para a avaliação da Etapa 8.
+   - **Requisito "atendido" sem evidência:** também vira `missing`. Um requisito que o modelo esqueceu de avaliar entra como `missing` com uma nota.
+   - **Pontos fortes:** cada um é marcado como verificado ou não, com a mesma regra.
+   - **Sugestões de currículo:** o trecho `original` precisa existir no perfil. O texto sugerido é varrido em busca de skills (as que o modelo declarou e as tecnologias da vaga que aparecem no texto) e de números que não estão no perfil. Tudo o que for encontrado aparece em `unsupported`.
+   - Evidências e skills são buscadas por palavra inteira: "Java" não é encontrado em "JavaScript", nem "Git" em "GitHub".
+   - A data de hoje vai junto no pedido, para o modelo ler períodos como "2023 - atual" e não tratar como futura uma data que já passou.
+4. **Nota em código:** obrigatório pesa 2 e desejável pesa 1; `meets` vale 1, `partial` vale 0,5 e `missing` vale 0. A nota (0 a 100) é a média ponderada dos status **já verificados**. O modelo não dá nota.
+5. **Histórico:** cada análise é salva com a versão do perfil usada. Se você editar o perfil depois, a análise aparece com `outdated: true`.
+6. **Endpoints:** `POST /jobs/{id}/analysis` (analisa e salva) e `GET /jobs/{id}/analysis` (análise mais recente). A análise exige um perfil salvo e uma trilha escolhida.
+7. **Testes:** um modelo mockado que inventa evidências é pego, e a nota volta a ser a mesma de uma resposta honesta. Também cobrem: evidência parafraseada, trechos de campos diferentes juntados com "...", "atende" sem evidência, ids duplicados, desconhecidos ou faltando, pontos fortes inventados, sugestões com skill ou número inventado, pesos da nota, versão do perfil e análise desatualizada.
+
+### Etapa 5: textos para o processo seletivo
+
+1. **Tipos de texto** ([backend/app/routers/texts.py](backend/app/routers/texts.py)): `summary` (resumo adaptado para o currículo), `cover_letter` (carta de apresentação curta) e `answer` (resposta a uma pergunta do processo seletivo). A resposta pode ser `written` (texto escrito) ou `audio_script` (roteiro para ler em voz alta em cerca de 1 minuto).
+2. **Contexto da geração** (prompt em [generate_text.md](backend/app/llm/prompts/generate_text.md)): o perfil salvo, a vaga e **só a parte verificada** da análise mais recente. Evidências rejeitadas na Etapa 4 não chegam ao modelo. Por isso é preciso analisar a vaga antes de gerar textos.
+3. **`[PREENCHER: ...]`**: quando o texto precisa de algo que não está no perfil (um resultado concreto, o motivo de querer a empresa, o seu nome), o modelo deixa um espaço marcado em vez de inventar. A API devolve a lista do que falta em `placeholders`.
+4. **Segunda verificação** ([backend/app/texts.py](backend/app/texts.py), prompt em [extract_claims.md](backend/app/llm/prompts/extract_claims.md)): uma segunda chamada ao Claude lista cada afirmação sobre você que aparece no texto, com a evidência no perfil. O código decide o que tem suporte, com as mesmas regras da análise:
+   - a evidência precisa existir no perfil;
+   - skills e números dentro da afirmação precisam estar no perfil (por exemplo, "3 anos de Python" é marcado se o perfil não tem "3");
+   - afirmações sem suporte voltam destacadas em `highlighted_text` como `[[SEM SUPORTE: ...]]`, com a posição no texto e o motivo.
+5. **Rede de segurança**: o código também varre o texto inteiro (fora dos `[PREENCHER]`) atrás de skills da vaga e números que não estão no perfil. Isso pega afirmações que o modelo "esqueceu" de listar, e elas aparecem em `warnings`.
+6. **Histórico**: cada texto é salvo com a verificação, a versão do perfil e a análise usadas. `GET /jobs/{id}/texts` lista do mais recente para o mais antigo.
+7. **Migração simples do banco** ([backend/app/database.py](backend/app/database.py)): ao subir, o servidor adiciona ao banco local as colunas novas que ainda não existem. Assim um banco criado nas etapas anteriores continua funcionando.
+8. **Testes**: afirmações inventadas (número, skill, evidência falsa ou ausente) são pegas; afirmações dentro de `[PREENCHER]` e duplicadas são ignoradas; termos que o modelo não listou aparecem nos avisos; o prompt de geração não recebe as evidências rejeitadas; pedidos inválidos são recusados sem chamar o Claude; nada é salvo se a auditoria falhar; e a migração de um banco antigo funciona.
+
+### Etapa 6: interface
+
+1. **Projeto** ([frontend/](frontend/)): React + TypeScript com Vite, TailwindCSS e componentes do shadcn/ui. Em desenvolvimento, o Vite encaminha as chamadas `/api/...` para o backend em `localhost:8000` (proxy), então não é preciso configurar CORS.
+2. **Candidaturas** ([frontend/src/pages/BoardPage.tsx](frontend/src/pages/BoardPage.tsx)): kanban com as colunas salva, aplicada, teste, entrevista, oferta e encerrada. Os cards são arrastados com dnd-kit. Cada card mostra empresa, cargo, nota de compatibilidade (verde, amarelo ou vermelho), há quantos dias a candidatura foi atualizada e um aviso se falta escolher a trilha. O estado do quadro fica num store do Zustand ([frontend/src/stores/jobsStore.ts](frontend/src/stores/jobsStore.ts)): o card muda de coluna na hora e volta para a coluna anterior se o servidor recusar.
+3. **Nova vaga** ([frontend/src/components/board/NewJobDialog.tsx](frontend/src/components/board/NewJobDialog.tsx)): você cola o texto, o Claude extrai e a tela mostra requisitos, tecnologias, senioridade e modalidade para conferir. Dá para confirmar, escolher a trilha (quando há várias) ou descartar.
+4. **Página da vaga** ([frontend/src/pages/JobPage.tsx](frontend/src/pages/JobPage.tsx)), com quatro abas:
+   - **Análise:** a nota, os requisitos com status coloridos e a evidência. Os requisitos rebaixados pelo verificador aparecem em vermelho, com o que o modelo tinha dito. Também mostra pontos fortes, lacunas, sugestões de currículo (as que trazem algo fora do perfil ficam marcadas) e o que estudar. Avisa quando o perfil mudou depois da análise.
+   - **Textos:** gerador de resumo, carta e resposta (texto escrito ou roteiro para áudio). As afirmações sem suporte aparecem sublinhadas em vermelho (passando o mouse, aparece o motivo), e os `[PREENCHER]` em amarelo. Tem botão de copiar e histórico dos textos gerados.
+   - **Vaga:** os dados extraídos e o texto original.
+   - **Notas:** campo de notas e histórico de status com datas.
+5. **Perfil** ([frontend/src/pages/ProfilePage.tsx](frontend/src/pages/ProfilePage.tsx)): upload do PDF, revisão e edição de todas as seções (experiências, skills, projetos, formação, certificações e idiomas) e botão salvar. O perfil extraído só é gravado quando você clica em **Salvar perfil**. Listas como atividades e skills são editadas com um item por linha, porque vários itens têm vírgula (por exemplo, "scikit-learn (Regressão Linear, Random Forest)").
+6. **Carregamento e erros:** toda chamada ao Claude mostra o que está acontecendo ("Comparando seu perfil com a vaga..."), e os erros do backend aparecem com a mensagem dele, em português. Se o backend estiver desligado, a tela diz isso.
+7. **Backend:** endpoints novos para a interface: `PATCH /jobs/{id}/application` (muda o status ou as notas), `DELETE /jobs/{id}` (apaga a vaga com a análise e os textos), e a lista de vagas passou a trazer a nota da última análise e a data de atualização.
+8. **Testes (Vitest):** destaque do texto, datas (o backend grava em UTC), mensagens de erro da API, store do kanban (mudança na hora e volta em caso de erro) e componentes (destaque em vermelho e amarelo, campo "um item por linha"). No backend, testes para os endpoints novos.
+
 ---
 
 ## Regras de uso
@@ -106,7 +151,7 @@ Esta seção descreve só o que já existe no código e é atualizada a cada eta
 
 - [Python 3.11+](https://www.python.org/downloads/)
 - [Git](https://git-scm.com/downloads)
-- [Node.js 20+](https://nodejs.org/) (só a partir da Etapa 6, para o frontend)
+- [Node.js 20+](https://nodejs.org/) (para a interface)
 - Uma chave de API da Anthropic: crie em [console.anthropic.com](https://console.anthropic.com) e defina um limite de gasto
 
 Para conferir as versões:
@@ -176,36 +221,47 @@ Abra no navegador:
 - http://localhost:8000/health → deve responder `{"status": "ok"}`
 - http://localhost:8000/docs → documentação interativa da API
 
-### 6. Rodar os testes
+### 6. Rodar a interface
+
+Em **outro terminal**, com o backend rodando:
 
 ```bash
-pytest
+cd frontend
+npm install   # só na primeira vez
+npm run dev
 ```
 
-Os testes não precisam de chave de API: usam banco em memória e Claude mockado.
+Abra http://localhost:5173.
 
-### 7. Usar: criar o seu perfil
+### 7. Usar o app
 
-1. Abra http://localhost:8000/docs.
-2. Em `POST /profile/upload`, clique em **Try it out**, escolha o PDF do currículo e execute. A resposta traz o perfil extraído (`data`) e o texto lido do PDF (`raw_text`).
-3. Revise o `data`: corrija o que estiver errado e apague o que não for verdade.
-4. Em `PUT /profile`, envie `{"data": <perfil revisado>, "raw_text": <texto>}` para salvar.
-5. `GET /profile` mostra o perfil salvo e a versão atual.
+1. **Perfil:** envie o PDF do currículo, revise e corrija o que foi extraído e clique em **Salvar perfil**. Apague o que não for verdade: tudo o que ficar aqui pode aparecer nas suas candidaturas.
+2. **Nova vaga:** em Candidaturas, clique em **Nova vaga**, cole o texto da vaga e confira se os requisitos saíram separados e corretos. Se a vaga tiver várias trilhas, escolha uma.
+3. **Análise:** abra a vaga e clique em **Analisar compatibilidade**. Requisitos marcados em vermelho com "Evidência não encontrada" foram rebaixados pelo verificador.
+4. **Textos:** na aba Textos, gere o resumo, a carta ou a resposta a uma pergunta. Corrija o que estiver sublinhado em vermelho, preencha o que estiver em amarelo e só então copie e envie.
+5. **Acompanhamento:** arraste o card no kanban conforme o processo avança e use a aba Notas para datas, contatos e próximos passos.
 
-> Até a interface ficar pronta (Etapa 6), a revisão é feita por essa página de documentação.
+A API também pode ser usada direto pela documentação interativa em http://localhost:8000/docs.
 
-### 8. Usar: cadastrar uma vaga
+### 8. Rodar os testes
 
-1. Em http://localhost:8000/docs, abra `POST /jobs` e envie `{"text": "<texto da vaga colado>", "url": "<link opcional>"}`.
-2. Confira na resposta se os requisitos (`required_requirements` e `preferred_requirements`) saíram separados e corretos.
-3. Se a vaga tiver várias trilhas (`needs_track_choice: true`), escolha uma em `PUT /jobs/{id}/track` com `{"track": <índice>}` (a primeira é `0`).
-4. `GET /jobs` lista as vagas; `GET /jobs?status=saved` filtra pelo status da candidatura.
+```bash
+# backend (dentro de backend/, com o ambiente virtual ativado)
+pytest
+
+# frontend (dentro de frontend/)
+npm test
+```
+
+Os testes não precisam de chave de API: o backend usa banco em memória e Claude mockado, e o frontend simula as respostas da API.
 
 ### Problemas comuns
 
 - **`ModuleNotFoundError`:** o ambiente virtual não está ativado ou você não está dentro de `backend/`.
 - **`ANTHROPIC_MODEL is not set`:** falta preencher o `backend/.env`.
-- **Porta 8000 ocupada:** use `uvicorn app.main:app --reload --port 8001`.
+- **Porta 8000 ocupada:** use `uvicorn app.main:app --reload --port 8001` e rode o frontend apontando para ela (PowerShell: `$env:BACKEND_URL="http://localhost:8001"; npm run dev`).
+- **A interface diz que não consegue falar com o servidor:** o backend não está rodando no outro terminal.
+- **`npx vitest` no Windows falha com "Vitest failed to find the current suite":** é um problema do Vitest quando a pasta é aberta como `c:\` (minúsculo). Use `npm test`, que já contorna isso.
 
 ---
 
@@ -221,7 +277,9 @@ job-copilot/
 │   │   ├── models.py        # tabelas do banco
 │   │   ├── schemas.py       # formatos de entrada/saída da API
 │   │   ├── pdf.py           # extração de texto do PDF
-│   │   ├── routers/         # endpoints (profile, jobs)
+│   │   ├── analysis.py      # verificação das evidências e nota de compatibilidade
+│   │   ├── texts.py         # verificação das afirmações dos textos gerados
+│   │   ├── routers/         # endpoints (profile, jobs, analysis, texts)
 │   │   └── llm/
 │   │       ├── client.py    # cliente do Claude (saída estruturada, tokens e tempo)
 │   │       ├── schemas.py   # schemas Pydantic das respostas da IA
@@ -229,6 +287,15 @@ job-copilot/
 │   ├── tests/               # testes (pytest)
 │   ├── requirements.txt
 │   └── .env.example
+├── frontend/
+│   ├── src/
+│   │   ├── pages/           # Candidaturas (kanban), Vaga e Perfil
+│   │   ├── components/      # kanban, nova vaga, análise, textos, notas, editor do perfil
+│   │   │   └── ui/          # componentes do shadcn/ui
+│   │   ├── stores/          # estado do kanban (Zustand)
+│   │   └── lib/             # cliente da API, tipos e formatação
+│   ├── scripts/vitest.mjs   # roda o Vitest (contorna o problema da letra do drive no Windows)
+│   └── vite.config.ts       # proxy /api para o backend
 ├── data/                    # banco local e uploads (fora do Git)
 ├── CLAUDE.md                # regras do projeto para o Claude Code
 └── README.md
