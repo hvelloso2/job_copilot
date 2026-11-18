@@ -6,7 +6,7 @@ from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
 
 from app.database import init_db
-from app.routers import analysis, jobs, profile, texts
+from app.routers import analysis, insights, jobs, profile, texts
 
 
 @asynccontextmanager
@@ -22,6 +22,7 @@ app.include_router(profile.router)
 app.include_router(jobs.router)
 app.include_router(analysis.router)
 app.include_router(texts.router)
+app.include_router(insights.router)
 
 
 @app.exception_handler(RequestValidationError)

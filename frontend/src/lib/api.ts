@@ -1,5 +1,6 @@
 import type {
   AnalysisOut,
+  Insights,
   ApplicationStatus,
   JobOut,
   JobSummary,
@@ -109,4 +110,7 @@ export const api = {
   listTexts: (jobId: number) => request<TextOut[]>(`/jobs/${jobId}/texts`),
   generateText: (jobId: number, body: TextRequest) =>
     request<TextOut>(`/jobs/${jobId}/texts`, { method: 'POST', body: json(body) }),
+
+  // dashboard
+  getInsights: () => request<Insights>('/insights'),
 }

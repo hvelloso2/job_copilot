@@ -4,6 +4,7 @@ import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
 import BoardPage from '@/pages/BoardPage'
+import InsightsPage from '@/pages/InsightsPage'
 import JobPage from '@/pages/JobPage'
 import ProfilePage from '@/pages/ProfilePage'
 
@@ -36,6 +37,7 @@ export default function App() {
             </div>
             <nav className="flex gap-1">
               <NavItem to="/">Candidaturas</NavItem>
+              <NavItem to="/painel">Painel</NavItem>
               <NavItem to="/perfil">Perfil</NavItem>
             </nav>
           </div>
@@ -44,6 +46,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<BoardPage />} />
             <Route path="/vagas/:id" element={<JobPage />} />
+            <Route path="/painel" element={<InsightsPage />} />
             <Route path="/perfil" element={<ProfilePage />} />
             <Route path="*" element={<p className="text-muted-foreground">Página não encontrada.</p>} />
           </Routes>

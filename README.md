@@ -213,7 +213,7 @@ Abra o `backend/.env` e preencha:
 Com o ambiente virtual ativado, dentro de `backend/`:
 
 ```bash
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 Abra no navegador:
@@ -247,7 +247,7 @@ A API também pode ser usada direto pela documentação interativa em http://loc
 
 ```bash
 # backend (dentro de backend/, com o ambiente virtual ativado)
-pytest
+python -m pytest
 
 # frontend (dentro de frontend/)
 npm test

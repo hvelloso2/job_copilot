@@ -183,3 +183,35 @@ export interface TextRequest {
   question?: string
   format?: TextFormat
 }
+
+// --- Dashboard (GET /insights) ---
+
+export interface SkillDemand {
+  name: string
+  count: number
+  share: number
+  in_profile: boolean
+}
+
+export interface FunnelStep {
+  status: ApplicationStatus
+  current: number
+  reached: number
+  rate_from_previous: number | null
+}
+
+export interface StatusScore {
+  status: ApplicationStatus
+  average: number | null
+  analyzed: number
+  total: number
+}
+
+export interface Insights {
+  total_jobs: number
+  has_profile: boolean
+  skills: SkillDemand[]
+  top_gaps: SkillDemand[]
+  funnel: FunnelStep[]
+  scores_by_status: StatusScore[]
+}

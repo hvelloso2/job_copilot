@@ -167,3 +167,36 @@ class TextOut(TextVerification):
     question: str | None
     text: str
     created_at: datetime
+
+
+# --- Dashboard (Etapa 7). Computed in code, no LLM call. ---
+
+
+class SkillDemand(BaseModel):
+    name: str
+    count: int = Field(description="Quantas vagas salvas pedem esta skill.")
+    share: int = Field(description="Porcentagem das vagas (0 a 100).")
+    in_profile: bool
+
+
+class FunnelStep(BaseModel):
+    status: ApplicationStatus
+    current: int = Field(description="Candidaturas com este status agora.")
+    reached: int = Field(description="Candidaturas que chegaram a esta etapa ou passaram dela.")
+    rate_from_previous: int | None = Field(description="reached desta etapa / reached da anterior, em %.")
+
+
+class StatusScore(BaseModel):
+    status: ApplicationStatus
+    average: int | None = Field(description="Nota média da análise mais recente. Null se nenhuma foi analisada.")
+    analyzed: int
+    total: int
+
+
+class Insights(BaseModel):
+    total_jobs: int
+    has_profile: bool
+    skills: list[SkillDemand]
+    top_gaps: list[SkillDemand] = Field(description="Skills mais pedidas que não estão no perfil.")
+    funnel: list[FunnelStep]
+    scores_by_status: list[StatusScore]
