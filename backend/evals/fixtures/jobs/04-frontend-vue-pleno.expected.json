@@ -1,0 +1,23 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "Sólida experiência em Vue.js", "match": ["vue"]},
+    {"text": "Sólida experiência em TypeScript", "match": ["typescript"]},
+    {"text": "Gerenciamento de estado (Pinia ou Vuex)", "match": ["estado", "pinia", "vuex"]},
+    {"text": "Testes unitários", "match": ["teste"]},
+    {"text": "HTML semântico", "match": ["html"]},
+    {"text": "CSS", "match": ["css"]},
+    {"text": "Acessibilidade web", "match": ["acessibilidade"]}
+  ],
+  "preferred": [
+    {"text": "Nuxt", "match": ["nuxt"]},
+    {"text": "Experiência com design systems", "match": ["design system"]}
+  ],
+  "analysis": [
+    {"match": ["vue"], "expected": "missing"},
+    {"match": ["typescript"], "expected": "missing"},
+    {"match": ["nuxt"], "expected": "missing"},
+    {"match": ["css"], "expected": "meets"}
+  ]
+}

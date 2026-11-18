@@ -1,0 +1,23 @@
+Rede Varejo Sol — Analista de Dados Júnior
+
+Local: Belo Horizonte/MG (presencial)
+
+Sobre a vaga: você vai apoiar as áreas de vendas e marketing com relatórios e análises.
+
+Atividades
+1. Construir e manter dashboards de vendas
+2. Responder perguntas de negócio com dados
+3. Garantir a qualidade das bases
+
+Requisitos
+1. Conhecimento em SQL
+2. Power BI
+3. Excel avançado
+4. Python para análise de dados
+5. Estatística básica
+
+Diferenciais
+1. pandas
+2. Google BigQuery
+
+Benefícios: vale-transporte, refeição no local, plano odontológico.

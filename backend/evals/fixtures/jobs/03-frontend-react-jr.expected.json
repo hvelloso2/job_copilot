@@ -1,0 +1,24 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "React", "match": ["react"]},
+    {"text": "JavaScript", "match": ["javascript"]},
+    {"text": "HTML", "match": ["html"]},
+    {"text": "CSS", "match": ["css"]},
+    {"text": "Git", "match": ["git"]},
+    {"text": "Consumo de APIs REST", "match": ["api"]}
+  ],
+  "preferred": [
+    {"text": "TypeScript", "match": ["typescript"]},
+    {"text": "Next.js", "match": ["next"]},
+    {"text": "Testes com Jest", "match": ["jest"]}
+  ],
+  "analysis": [
+    {"match": ["react"], "expected": "meets"},
+    {"match": ["javascript"], "expected": "meets"},
+    {"match": ["html"], "expected": "meets"},
+    {"match": ["next"], "expected": "missing"},
+    {"match": ["jest"], "expected": "missing"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "3+ anos de experiência com Java", "match": ["java"]},
+    {"text": "Spring Boot", "match": ["spring"]},
+    {"text": "Arquitetura de microsserviços", "match": ["microsservi", "microservi"]},
+    {"text": "Banco de dados Oracle", "match": ["oracle"]},
+    {"text": "Mensageria com Kafka", "match": ["kafka"]}
+  ],
+  "preferred": [
+    {"text": "AWS", "match": ["aws"]},
+    {"text": "Kubernetes", "match": ["kubernetes"]}
+  ],
+  "analysis": [
+    {"match": ["java"], "expected": "missing"},
+    {"match": ["spring"], "expected": "missing"},
+    {"match": ["kafka"], "expected": "missing"},
+    {"match": ["oracle"], "expected": "missing"},
+    {"match": ["kubernetes"], "expected": "missing"}
+  ]
+}

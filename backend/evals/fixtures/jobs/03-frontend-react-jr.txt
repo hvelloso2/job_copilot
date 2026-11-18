@@ -1,0 +1,21 @@
+Studio Lume está contratando: Desenvolvedor(a) Front-end Júnior
+
+Somos um estúdio de produtos digitais em Curitiba (modelo híbrido, 2x por semana no escritório).
+
+Você vai:
+- Construir interfaces para clientes de varejo
+- Trabalhar junto com o time de design
+
+Precisamos que você tenha:
+- React
+- JavaScript
+- HTML e CSS
+- Git
+- Consumo de APIs REST
+
+Seria ótimo se tiver:
+- TypeScript
+- Next.js
+- Testes com Jest
+
+Benefícios: vale-alimentação, day off no aniversário, cursos pagos.

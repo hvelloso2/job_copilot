@@ -1,0 +1,653 @@
+{
+ "model": "claude-opus-5-5",
+ "label": "baseline",
+ "started": "2026-11-18 13:56",
+ "seconds": 434.2951118000019,
+ "fixtures_reviewed": false,
+ "jobs": [
+  {
+   "id": "01-backend-python-jr",
+   "errors": [],
+   "extraction": {
+    "expected": 8,
+    "found": 8,
+    "extracted": 8,
+    "extracted_valid": 8,
+    "kind_checked": 8,
+    "kind_correct": 8,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 85,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "Experiência com Python",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Conhecimento em FastAPI",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Experiência com banco de dados PostgreSQL",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Kubernetes",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Mensageria com RabbitMQ",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    }
+   ],
+   "text": {
+    "claims": 18,
+    "unsupported": 0,
+    "warnings": [],
+    "placeholders": 2,
+    "highlighted": "Olá, equipe da Fintech Aurora,\n\nGostaria de me candidatar à vaga de Pessoa Desenvolvedora Backend Python Júnior. [PREENCHER: o que te motiva a trabalhar na Fintech Aurora e no app de pagamentos]\n\nDesde março de 2024, trabalho como Desenvolvedora Backend na Loja Exemplo Ltda. Lá desenvolvo APIs REST com Python e FastAPI, a mesma stack da vaga. No dia a dia, também modelo bancos de dados PostgreSQL e escrevo testes automatizados com pytest. Além disso, uso containers Docker no ambiente de desenvolvimento e trabalho com integração contínua no GitHub Actions. Fora do trabalho, desenvolvi um chatbot de FAQ com Python, FastAPI e a API do Claude, que responde perguntas sobre documentos usando busca por similaridade. Antes disso, fui estagiária na Agência Fictícia Digital, onde fiz telas em React e consultas SQL para relatórios internos. Sou bacharel em Ciência da Computação pela Universidade Exemplo e tenho a certificação AWS Certified Cloud Practitioner (2024).\n\nTerei prazer em conversar sobre como posso contribuir com a criação e a manutenção das APIs do app de pagamentos. Obrigada pela atenção.\n\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "02-backend-java-pleno",
+   "errors": [],
+   "extraction": {
+    "expected": 7,
+    "found": 7,
+    "extracted": 7,
+    "extracted_valid": 7,
+    "kind_checked": 7,
+    "kind_correct": 7,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 17,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "3+ anos de experiência com Java",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Spring Boot",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Mensageria com Kafka",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Banco de dados Oracle",
+     "expected": "missing",
+     "got": "partial",
+     "correct": false
+    },
+    {
+     "requirement": "Kubernetes",
+     "expected": "missing",
+     "got": "partial",
+     "correct": false
+    }
+   ],
+   "text": {
+    "claims": 17,
+    "unsupported": 1,
+    "warnings": [],
+    "placeholders": 3,
+    "highlighted": "Olá, equipe do Banco Horizonte,\n\nTenho interesse na vaga de Desenvolvedor(a) Java Pleno porque [PREENCHER: o que te motiva no Banco Horizonte e na área de crédito]. Sou desenvolvedora backend e trabalho com desenvolvimento e manutenção de APIs.\n\nDesde mar/2024, na Loja Exemplo Ltda, desenvolvo APIs REST com Python e FastAPI e cuido da modelagem de banco de dados PostgreSQL. A qualidade dos serviços faz parte da minha rotina: escrevo testes automatizados com pytest, mantenho a integração contínua com GitHub Actions e uso Docker no ambiente de desenvolvimento. Também tenho a certificação AWS Certified Cloud Practitioner (2024) e sou bacharel em Ciência da Computação pela Universidade Exemplo. Quero ser transparente: [[SEM SUPORTE: ainda não trabalhei com Java, Spring Boot, Kafka, Oracle ou Kubernetes]]. Minha experiência profissional é com Python e PostgreSQL. [PREENCHER: como você pretende aprender Java e Spring Boot, por exemplo um curso ou projeto em andamento].\n\nFicarei feliz em conversar sobre como minha experiência com APIs, bancos relacionais e testes pode contribuir com a equipe. Obrigada pela atenção.\n\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "03-frontend-react-jr",
+   "errors": [],
+   "extraction": {
+    "expected": 9,
+    "found": 9,
+    "extracted": 9,
+    "extracted_valid": 9,
+    "kind_checked": 9,
+    "kind_correct": 9,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 77,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "React",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "JavaScript",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "HTML",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Next.js",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Testes com Jest",
+     "expected": "missing",
+     "got": "partial",
+     "correct": false
+    }
+   ],
+   "text": {
+    "claims": 17,
+    "unsupported": 1,
+    "warnings": [],
+    "placeholders": 2,
+    "highlighted": "Olá, equipe do Studio Lume,\n\nTenho interesse na vaga de Desenvolvedora Front-end Júnior porque [PREENCHER: o que te atrai no Studio Lume ou em construir interfaces para clientes de varejo].\n\nNo estágio na Agência Fictícia Digital (jan/2023 a fev/2024), desenvolvi telas em React com JavaScript e fiz a manutenção de sites em HTML e CSS. Desde mar/2024, atuo como Desenvolvedora Backend na Loja Exemplo Ltda. Lá desenvolvo APIs REST com Python e FastAPI e escrevo testes automatizados com pytest. [[SEM SUPORTE: Essa experiência no lado do servidor me dá uma boa compreensão de como as APIs são construídas]], o que pode ajudar na integração das interfaces com os serviços. No dia a dia trabalho com Git e com integração contínua no GitHub Actions. Sou bacharel em Ciência da Computação pela Universidade Exemplo.\n\nGostaria de conversar sobre como essa base em React, HTML, CSS e APIs pode contribuir para as interfaces que o Studio Lume constrói junto com o time de design. Agradeço a atenção e fico à disposição.\n\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "04-frontend-vue-pleno",
+   "errors": [],
+   "extraction": {
+    "expected": 9,
+    "found": 9,
+    "extracted": 9,
+    "extracted_valid": 9,
+    "kind_checked": 9,
+    "kind_correct": 9,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 19,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "Sólida experiência em Vue.js",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Sólida experiência em TypeScript",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Conhecer Nuxt",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Dominar CSS",
+     "expected": "meets",
+     "got": "partial",
+     "correct": false
+    }
+   ],
+   "text": {
+    "claims": 13,
+    "unsupported": 1,
+    "warnings": [],
+    "placeholders": 3,
+    "highlighted": "Olá, equipe da Agenda Fácil,\n\nEscrevo para me candidatar à vaga de Front-end Pleno (Vue). [PREENCHER: o que te atrai na Agenda Fácil e no trabalho com o painel de agendamento].\n\nMinha experiência com interfaces vem do estágio na Agência Fictícia Digital (jan/2023 a fev/2024). Lá desenvolvi telas em React com JavaScript e fiz a manutenção de sites em HTML e CSS. Desde mar/2024 sou Desenvolvedora Backend na Loja Exemplo Ltda. Nessa função desenvolvo APIs REST com Python e FastAPI, escrevo testes automatizados com pytest e trabalho com integração contínua no GitHub Actions. Essa rotina de testes e integração contínua é algo que gostaria de levar para o front-end. Sou bacharel em Ciência da Computação pela Universidade Exemplo.\n\nQuero ser transparente: [[SEM SUPORTE: ainda não trabalhei com Vue, TypeScript ou gerenciamento de estado com Pinia/Vuex]]. [PREENCHER: como você planeja aprender Vue e TypeScript, ou o que já está fazendo para isso]. Ficarei feliz em conversar sobre como posso contribuir com a evolução do painel de agendamento.\n\nAtenciosamente,\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "05-fullstack-node-en",
+   "errors": [],
+   "extraction": {
+    "expected": 9,
+    "found": 9,
+    "extracted": 9,
+    "extracted_valid": 9,
+    "kind_checked": 9,
+    "kind_correct": 9,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 57,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "React",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "PostgreSQL",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Docker",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Node.js",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "GraphQL",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    }
+   ],
+   "text": {
+    "claims": 15,
+    "unsupported": 2,
+    "warnings": [],
+    "placeholders": 3,
+    "highlighted": "Dear Bluepeak Software team,\n\nI am applying for the Full-Stack Engineer position. [PREENCHER: why Bluepeak Software and this role interest you]. Shipping features end to end, from the database to the UI, builds on [[SEM SUPORTE: the work I have done on both the backend and the frontend]].\n\nSince March 2024, I have worked as a Backend Developer at Loja Exemplo Ltda. There I build REST APIs with Python and FastAPI and model PostgreSQL databases. I also write automated tests with pytest, use Docker containers for the development environment, and work with continuous integration through GitHub Actions. On the frontend, during my internship at Agência Fictícia Digital, I built screens in React with JavaScript and maintained websites in HTML and CSS. I hold a Bachelor's degree in Computer Science and the AWS Certified Cloud Practitioner certification. [[SEM SUPORTE: I have not yet worked with Node.js or TypeScript]]. [PREENCHER: how you plan to get up to speed with Node.js and TypeScript].\n\nI would welcome the chance to talk about how I can contribute to your team. Thank you for your time and consideration.\n\nBest regards,\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "06-dados-analista-jr",
+   "errors": [],
+   "extraction": {
+    "expected": 7,
+    "found": 7,
+    "extracted": 7,
+    "extracted_valid": 7,
+    "kind_checked": 7,
+    "kind_correct": 7,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 33,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "Conhecimento em SQL",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "pandas",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Power BI",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Google BigQuery",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    }
+   ],
+   "text": {
+    "claims": 16,
+    "unsupported": 3,
+    "warnings": [],
+    "placeholders": 3,
+    "highlighted": "Olá, equipe da Rede Varejo Sol,\n\nTenho interesse na vaga de Analista de Dados Júnior porque [PREENCHER: o que motiva você a trabalhar com análise de dados e na Rede Varejo Sol]. Sou bacharela em Ciência da Computação e hoje atuo como desenvolvedora backend, trabalhando todos os dias com bancos de dados e Python.\n\nNo estágio na Agência Fictícia Digital, escrevi consultas SQL para relatórios internos. É uma rotina próxima de responder perguntas de negócio com dados. Na Loja Exemplo Ltda, onde trabalho desde março de 2024, faço a modelagem de banco de dados PostgreSQL e desenvolvo APIs em Python com testes automatizados em pytest. Esse trabalho [[SEM SUPORTE: me deu familiaridade com a estrutura das bases que alimentam relatórios]]. Também desenvolvi um projeto pessoal com Python, pandas e Streamlit: um painel que organiza gastos a partir de planilhas e que [[SEM SUPORTE: me aproximou da análise e da visualização de dados]].\n\n[[SEM SUPORTE: Ainda não trabalhei com Power BI, Excel avançado nem estatística]], e [PREENCHER: como você pretende desenvolver esses conhecimentos]. Gostaria de conversar sobre como posso contribuir com os dashboards e as análises para as áreas de vendas e marketing.\n\nAtenciosamente,\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "07-dados-engenheiro-pleno",
+   "errors": [],
+   "extraction": {
+    "expected": 8,
+    "found": 8,
+    "extracted": 8,
+    "extracted_valid": 8,
+    "kind_checked": 8,
+    "kind_correct": 8,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 43,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "Python",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Apache Spark",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Apache Airflow",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "dbt",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Terraform",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    }
+   ],
+   "text": {
+    "claims": 17,
+    "unsupported": 1,
+    "warnings": [],
+    "placeholders": 3,
+    "highlighted": "Olá, equipe da LogiData,\n\nTenho interesse na vaga de Engenheira de Dados Pleno porque [PREENCHER: o que te motiva na LogiData e na mudança para engenharia de dados]. Atuo hoje como Desenvolvedora Backend e quero aplicar minha base em Python, SQL e modelagem de dados na construção de pipelines e na modelagem do data warehouse da empresa.\n\nNa Loja Exemplo Ltda, onde trabalho desde mar/2024, desenvolvo APIs REST com Python e FastAPI, modelo o banco de dados PostgreSQL e escrevo testes automatizados com pytest, com integração contínua no GitHub Actions. No estágio na Agência Fictícia Digital, escrevi consultas SQL para relatórios internos. Também manipulo dados com pandas, como no meu projeto de painel que organiza gastos pessoais a partir de planilhas, e tenho a certificação AWS Certified Cloud Practitioner (2024). [[SEM SUPORTE: Ainda não trabalhei com Apache Spark, Apache Airflow ou modelagem dimensional de data warehouse]]. [PREENCHER: como pretende desenvolver essas habilidades]\n\nFicarei feliz em conversar sobre como posso contribuir com o time de dados da LogiData. Obrigada pela atenção.\n\nAtenciosamente,\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "08-ia-engenheiro-jr",
+   "errors": [],
+   "extraction": {
+    "expected": 8,
+    "found": 8,
+    "extracted": 8,
+    "extracted_valid": 8,
+    "kind_checked": 8,
+    "kind_correct": 8,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 64,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "Python",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "FastAPI",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "LangChain",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    }
+   ],
+   "text": {
+    "claims": 18,
+    "unsupported": 3,
+    "warnings": [],
+    "placeholders": 3,
+    "highlighted": "Olá, equipe Cognita,\n\nTenho interesse na vaga de Engenheira de IA Júnior (LLMs) porque [PREENCHER: o que te motiva nesta vaga e na Cognita]. Hoje atuo como desenvolvedora backend com Python e APIs REST, e quero aplicar essa base na construção de funcionalidades com modelos de linguagem.\n\nO que tenho de mais próximo da vaga é um [[SEM SUPORTE: projeto pessoal]]: um chatbot de FAQ que responde perguntas sobre documentos usando a API do Claude (Anthropic) e busca por similaridade, desenvolvido com Python e FastAPI. Na Loja Exemplo Ltda, desde mar/2024, desenvolvo APIs REST com Python e FastAPI, modelo bancos de dados PostgreSQL e escrevo testes automatizados com pytest. Também uso Docker no ambiente de desenvolvimento e integração contínua com GitHub Actions, e tenho a certificação AWS Certified Cloud Practitioner (2024). [[SEM SUPORTE: Ainda não trabalhei com bancos de dados vetoriais]] [[SEM SUPORTE: nem com avaliação de modelos de linguagem]]. [PREENCHER: como pretende desenvolver esses pontos]\n\nGostaria de conversar sobre como posso contribuir com o time da Cognita. Obrigada pela atenção.\n\nAtenciosamente,\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "09-trilhas-backend-dados",
+   "errors": [],
+   "extraction": {
+    "expected": 5,
+    "found": 5,
+    "extracted": 5,
+    "extracted_valid": 5,
+    "kind_checked": 5,
+    "kind_correct": 5,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 83,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "Django",
+     "expected": "meets",
+     "got": "partial",
+     "correct": false
+    },
+    {
+     "requirement": "PostgreSQL",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Redis",
+     "expected": "meets",
+     "got": "partial",
+     "correct": false
+    }
+   ],
+   "text": {
+    "claims": 17,
+    "unsupported": 0,
+    "warnings": [],
+    "placeholders": 2,
+    "highlighted": "Olá, equipe do Grupo Atlas,\n\nTenho interesse na vaga de Desenvolvedora Backend Júnior porque [PREENCHER: o que te atrai no Grupo Atlas ou nesta vaga]. Hoje trabalho como desenvolvedora backend com foco em Python e APIs REST, e esta posição dá continuidade ao que faço no dia a dia.\n\nDesde março de 2024, na Loja Exemplo Ltda, desenvolvo APIs REST com Python e FastAPI e faço a modelagem de banco de dados PostgreSQL. Também escrevo testes automatizados com pytest, uso Docker no ambiente de desenvolvimento e trabalho com integração contínua via GitHub Actions. Antes disso, como estagiária na Agência Fictícia Digital, escrevi consultas SQL para relatórios internos e desenvolvi telas em React com JavaScript. Em um projeto pessoal, construí um chatbot de FAQ com Python, FastAPI e a API do Claude, que responde perguntas sobre documentos usando busca por similaridade. Sou bacharela em Ciência da Computação, tenho a certificação AWS Certified Cloud Practitioner (2024) e inglês intermediário.\n\nGostaria de conversar sobre como posso contribuir com a equipe do Grupo Atlas. Agradeço pela atenção.\n\nAtenciosamente,\n[PREENCHER: seu nome]"
+   }
+  },
+  {
+   "id": "10-devops-jr-ruidoso",
+   "errors": [],
+   "extraction": {
+    "expected": 9,
+    "found": 9,
+    "extracted": 9,
+    "extracted_valid": 9,
+    "kind_checked": 9,
+    "kind_correct": 9,
+    "tracks_ok": true,
+    "missed": [],
+    "invented": [],
+    "wrong_kind": [],
+    "coverage": 1.0,
+    "precision": 1.0
+   },
+   "score": 40,
+   "evidence_rejected": 0,
+   "analysis_cases": [
+    {
+     "requirement": "Docker",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "Linux",
+     "expected": "meets",
+     "got": "meets",
+     "correct": true
+    },
+    {
+     "requirement": "CI/CD",
+     "expected": "meets",
+     "got": "partial",
+     "correct": false
+    },
+    {
+     "requirement": "Terraform",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    },
+    {
+     "requirement": "Kubernetes",
+     "expected": "missing",
+     "got": "missing",
+     "correct": true
+    }
+   ],
+   "text": {
+    "claims": 20,
+    "unsupported": 7,
+    "warnings": [],
+    "placeholders": 3,
+    "highlighted": "Olá, equipe da Nuvem Clara,\n\nTenho interesse na vaga de DevOps Júnior porque [PREENCHER: o que te motiva nesta vaga e na Nuvem Clara]. Desde mar/2024 atuo como Desenvolvedora Backend na Loja Exemplo Ltda. Além de desenvolver APIs REST com Python e FastAPI, [[SEM SUPORTE: trabalho com partes do ciclo de desenvolvimento que se aproximam da rotina de DevOps]].\n\nNessa experiência, uso containers Docker no ambiente de desenvolvimento e trabalho com integração contínua usando GitHub Actions. Também escrevo testes automatizados com pytest, [[SEM SUPORTE: o que reforça minha atenção à qualidade do que é entregue]]. Tenho conhecimento de Linux e Git. Em 2024, obtive a certificação AWS Certified Cloud Practitioner, que [[SEM SUPORTE: me deu uma base nos conceitos de cloud]]. Sou bacharela em Ciência da Computação pela Universidade Exemplo.\n\n[[SEM SUPORTE: Ainda não trabalhei com Terraform]], [[SEM SUPORTE: shell script]], [[SEM SUPORTE: deploy contínuo]] [[SEM SUPORTE: nem com serviços AWS na prática]], e pretendo desenvolver esses pontos [PREENCHER: como você planeja aprender essas ferramentas]. Gostaria de conversar sobre como posso contribuir com a automação de infraestrutura e os pipelines da equipe.\n\nAtenciosamente,\n[PREENCHER: seu nome]"
+   }
+  }
+ ],
+ "planted": [
+  {
+   "case": 1,
+   "fabricated": 2,
+   "caught": 2,
+   "true_statements": 2,
+   "false_alarms": 0,
+   "missed": [],
+   "flagged_true": []
+  },
+  {
+   "case": 2,
+   "fabricated": 2,
+   "caught": 2,
+   "true_statements": 2,
+   "false_alarms": 0,
+   "missed": [],
+   "flagged_true": []
+  },
+  {
+   "case": 3,
+   "fabricated": 2,
+   "caught": 2,
+   "true_statements": 1,
+   "false_alarms": 0,
+   "missed": [],
+   "flagged_true": []
+  },
+  {
+   "case": 4,
+   "fabricated": 1,
+   "caught": 1,
+   "true_statements": 2,
+   "false_alarms": 0,
+   "missed": [],
+   "flagged_true": []
+  }
+ ],
+ "costs": [
+  {
+   "operation": "extract_job",
+   "calls": 10,
+   "input_tokens": 2031,
+   "output_tokens": 303,
+   "seconds": 3.5,
+   "cost_usd": 0.0141844
+  },
+  {
+   "operation": "analyze_job",
+   "calls": 10,
+   "input_tokens": 3301,
+   "output_tokens": 2358,
+   "seconds": 20.7,
+   "cost_usd": 0.0603692
+  },
+  {
+   "operation": "generate_text",
+   "calls": 10,
+   "input_tokens": 2980,
+   "output_tokens": 1222,
+   "seconds": 11.5,
+   "cost_usd": 0.0363524
+  },
+  {
+   "operation": "extract_claims",
+   "calls": 14,
+   "input_tokens": 2264,
+   "output_tokens": 608,
+   "seconds": 5.5,
+   "cost_usd": 0.021222285714285714
+  }
+ ],
+ "total_cost": 1.406172,
+ "summary": {
+  "coverage": 1.0,
+  "precision": 1.0,
+  "kind_accuracy": 1.0,
+  "tracks_ok": "10/10",
+  "analysis_accuracy": 0.8409090909090909,
+  "analysis_cases": 44,
+  "planted_caught": 1.0,
+  "planted_false_alarms": 0.0,
+  "texts": 10,
+  "text_claims": 168,
+  "text_unsupported": 19,
+  "text_warnings": 0,
+  "cost_per_job": 0.0745536,
+  "cost_per_text": 0.057574685714285714,
+  "errors": 0
+ }
+}

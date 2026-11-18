@@ -1,0 +1,19 @@
+{
+  "reviewed": false,
+  "tracks": 2,
+  "track": "backend",
+  "required": [
+    {"text": "Inglês intermediário", "match": ["ingles"]},
+    {"text": "Python", "match": ["python"]},
+    {"text": "Django", "match": ["django"]},
+    {"text": "PostgreSQL", "match": ["postgres"]}
+  ],
+  "preferred": [
+    {"text": "Redis", "match": ["redis"]}
+  ],
+  "analysis": [
+    {"match": ["django"], "expected": "meets"},
+    {"match": ["postgres"], "expected": "meets"},
+    {"match": ["redis"], "expected": "meets"}
+  ]
+}

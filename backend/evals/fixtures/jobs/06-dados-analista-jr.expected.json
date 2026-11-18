@@ -1,0 +1,21 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "Conhecimento em SQL", "match": ["sql"]},
+    {"text": "Power BI", "match": ["power bi", "powerbi"]},
+    {"text": "Excel avançado", "match": ["excel"]},
+    {"text": "Python para análise de dados", "match": ["python"]},
+    {"text": "Estatística básica", "match": ["estatistica"]}
+  ],
+  "preferred": [
+    {"text": "pandas", "match": ["pandas"]},
+    {"text": "Google BigQuery", "match": ["bigquery"]}
+  ],
+  "analysis": [
+    {"match": ["sql"], "expected": "meets"},
+    {"match": ["pandas"], "expected": "meets"},
+    {"match": ["power bi", "powerbi"], "expected": "missing"},
+    {"match": ["bigquery"], "expected": "missing"}
+  ]
+}

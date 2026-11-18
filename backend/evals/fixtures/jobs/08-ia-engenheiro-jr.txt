@@ -1,0 +1,22 @@
+Cognita — Engenheiro(a) de IA Júnior (LLMs)
+
+A Cognita cria assistentes de IA para escritórios de advocacia. Trabalho remoto.
+
+O que você fará
+- Construir funcionalidades com modelos de linguagem
+- Criar pipelines de busca em documentos
+- Medir a qualidade das respostas
+
+Requisitos
+- Python
+- Experiência com APIs de LLM (OpenAI, Anthropic ou similares)
+- RAG (Retrieval-Augmented Generation)
+- Bancos de dados vetoriais
+- FastAPI
+- Git
+
+Diferenciais
+- LangChain
+- Avaliação de modelos de linguagem
+
+Benefícios: stock options, plano de saúde, notebook.

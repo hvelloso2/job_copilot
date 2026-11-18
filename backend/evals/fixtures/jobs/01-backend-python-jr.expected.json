@@ -1,0 +1,23 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "Experiência com Python", "match": ["python"]},
+    {"text": "Conhecimento em FastAPI", "match": ["fastapi"]},
+    {"text": "Experiência com banco de dados PostgreSQL", "match": ["postgres"]},
+    {"text": "Testes automatizados", "match": ["teste"]},
+    {"text": "Git", "match": ["git"]}
+  ],
+  "preferred": [
+    {"text": "Docker", "match": ["docker"]},
+    {"text": "Kubernetes", "match": ["kubernetes"]},
+    {"text": "Mensageria com RabbitMQ", "match": ["rabbitmq"]}
+  ],
+  "analysis": [
+    {"match": ["python"], "expected": "meets"},
+    {"match": ["fastapi"], "expected": "meets"},
+    {"match": ["postgres"], "expected": "meets"},
+    {"match": ["kubernetes"], "expected": "missing"},
+    {"match": ["rabbitmq"], "expected": "missing"}
+  ]
+}

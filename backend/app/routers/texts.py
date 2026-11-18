@@ -4,16 +4,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.analysis import KIND_LABEL, STATUS_LABEL, ProfileIndex
+from app.analysis import KIND_LABEL, STATUS_LABEL
 from app.database import get_db
 from app.dependencies import get_llm_client, llm_errors_as_http
 from app.llm.client import LLMClient
 from app.llm.prompts import load_prompt
-from app.llm.schemas import ClaimList, JobData, TextDraft
+from app.llm.schemas import JobData, TextDraft
 from app.models import Analysis, GeneratedText, TextFormat
 from app.queries import current_profile, get_job_or_404
 from app.schemas import AnalysisResult, TextCreate, TextOut, TextVerification
-from app.texts import find_placeholders, highlight, text_warnings, verify_claims
+from app.texts import audit_text, find_placeholders, highlight
 
 router = APIRouter(prefix="/jobs/{job_id}/texts", tags=["texts"])
 
@@ -100,21 +100,14 @@ def generate_text(
         text = draft.text.strip()
         if not text:
             raise HTTPException(status_code=502, detail="O modelo devolveu um texto vazio.")
-        claims = llm.create_structured(
-            "extract_claims",
-            ClaimList,
-            system=load_prompt("extract_claims"),
-            messages=[{"role": "user", "content": f"<perfil>\n{profile_json}\n</perfil>\n\n<texto>\n{text}\n</texto>"}],
-        )
+        checked, warnings = audit_text(llm, text, track, profile.data)
 
-    index = ProfileIndex(profile.data)
-    checked = verify_claims(text, claims, track, index)
     verification = TextVerification(
         highlighted_text=highlight(text, checked),
         placeholders=find_placeholders(text),
         claims=checked,
         unsupported_claims=sum(not c.supported for c in checked),
-        warnings=text_warnings(text, track, index, checked),
+        warnings=warnings,
         profile_version=profile.version,
         analysis_id=analysis.id,
     )

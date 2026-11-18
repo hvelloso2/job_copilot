@@ -1,0 +1,23 @@
+Bluepeak Software — Full-Stack Engineer (Mid-level) — Remote (LATAM)
+
+Bluepeak builds scheduling software for logistics companies in the US.
+
+What you'll do
+* Ship features end to end, from database to UI
+* Work closely with product and design
+* Take part in code reviews and on-call rotation
+
+Must have
+* 3+ years building web applications
+* Node.js
+* React
+* TypeScript
+* PostgreSQL
+* Fluent English
+
+Nice to have
+* GraphQL
+* AWS
+* Docker
+
+Perks: USD salary, 30 days of paid time off, home office budget.

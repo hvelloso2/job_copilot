@@ -1,0 +1,21 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "Python", "match": ["python"]},
+    {"text": "Experiência com APIs de LLM", "match": ["llm"]},
+    {"text": "RAG", "match": ["rag", "retrieval"]},
+    {"text": "Bancos de dados vetoriais", "match": ["vetoria", "vector"]},
+    {"text": "FastAPI", "match": ["fastapi"]},
+    {"text": "Git", "match": ["git"]}
+  ],
+  "preferred": [
+    {"text": "LangChain", "match": ["langchain"]},
+    {"text": "Avaliação de modelos de linguagem", "match": ["avaliacao"]}
+  ],
+  "analysis": [
+    {"match": ["python"], "expected": "meets"},
+    {"match": ["fastapi"], "expected": "meets"},
+    {"match": ["langchain"], "expected": "missing"}
+  ]
+}

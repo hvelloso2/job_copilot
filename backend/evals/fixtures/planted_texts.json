@@ -1,0 +1,30 @@
+{
+  "reviewed": false,
+  "about": "Textos com afirmações inventadas plantadas de propósito. Mede se a verificação de textos (o Claude lista as afirmações, o código confere contra o perfil) pega as invenções sem marcar as verdadeiras.",
+  "texts": [
+    {
+      "text": "Sou desenvolvedora backend e trabalho com Python e FastAPI na Loja Exemplo Ltda. Tenho 5 anos de experiência com Kubernetes e liderei uma equipe de 8 pessoas. Sou formada em Ciência da Computação pela Universidade Exemplo.",
+      "job_technologies": ["Python", "FastAPI", "Kubernetes"],
+      "fabricated": ["5 anos de experiência com Kubernetes", "liderei uma equipe de 8 pessoas"],
+      "true": ["trabalho com Python e FastAPI", "formada em Ciência da Computação"]
+    },
+    {
+      "text": "No estágio na Agência Fictícia Digital desenvolvi telas em React. Reduzi o tempo de carregamento das páginas em 40%. Tenho a certificação AWS Certified Cloud Practitioner e também a AWS Solutions Architect Associate.",
+      "job_technologies": ["React", "AWS"],
+      "fabricated": ["Reduzi o tempo de carregamento das páginas em 40%", "AWS Solutions Architect Associate"],
+      "true": ["desenvolvi telas em React", "AWS Certified Cloud Practitioner"]
+    },
+    {
+      "text": "Tenho inglês fluente e já trabalhei com Java e Spring Boot em projetos de microsserviços. Criei um chatbot de FAQ com a API do Claude.",
+      "job_technologies": ["Java", "Spring Boot"],
+      "fabricated": ["inglês fluente", "trabalhei com Java e Spring Boot"],
+      "true": ["chatbot de FAQ com a API do Claude"]
+    },
+    {
+      "text": "Escrevo testes automatizados com pytest e uso Docker no dia a dia. Publiquei um artigo sobre RAG no congresso da SBC em 2024.",
+      "job_technologies": ["pytest", "Docker", "RAG"],
+      "fabricated": ["Publiquei um artigo sobre RAG no congresso da SBC em 2024"],
+      "true": ["testes automatizados com pytest", "uso Docker"]
+    }
+  ]
+}

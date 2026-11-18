@@ -1,0 +1,22 @@
+LogiData — Engenheiro(a) de Dados Pleno
+
+A LogiData processa dados de rastreamento de milhares de entregas por dia. Modelo remoto.
+
+Responsabilidades
+- Construir e manter pipelines de dados em batch
+- Modelar o data warehouse da empresa
+- Monitorar a qualidade dos dados
+
+O que esperamos de você
+- Python
+- SQL
+- Apache Spark
+- Apache Airflow
+- Modelagem de data warehouse
+- Experiência com AWS
+
+Diferenciais
+- dbt
+- Terraform
+
+Oferecemos: bônus anual, plano de saúde, auxílio educação.

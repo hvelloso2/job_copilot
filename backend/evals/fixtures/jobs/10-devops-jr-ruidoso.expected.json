@@ -1,0 +1,24 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "Linux", "match": ["linux"]},
+    {"text": "Docker", "match": ["docker"]},
+    {"text": "CI/CD", "match": ["ci/cd", "ci cd", "integracao continua"]},
+    {"text": "Shell script", "match": ["shell"]},
+    {"text": "Cloud AWS", "match": ["aws"]},
+    {"text": "Terraform", "match": ["terraform"]}
+  ],
+  "preferred": [
+    {"text": "Kubernetes", "match": ["kubernetes"]},
+    {"text": "Prometheus", "match": ["prometheus"]},
+    {"text": "Grafana", "match": ["grafana"]}
+  ],
+  "analysis": [
+    {"match": ["docker"], "expected": "meets"},
+    {"match": ["linux"], "expected": "meets"},
+    {"match": ["ci/cd", "ci cd"], "expected": "meets"},
+    {"match": ["terraform"], "expected": "missing"},
+    {"match": ["kubernetes"], "expected": "missing"}
+  ]
+}

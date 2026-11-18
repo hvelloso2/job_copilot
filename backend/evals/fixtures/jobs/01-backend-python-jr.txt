@@ -1,0 +1,23 @@
+Fintech Aurora — Pessoa Desenvolvedora Backend Python Júnior
+
+Sobre nós: a Aurora ajuda pequenos negócios a organizar pagamentos. Somos 40 pessoas, 100% remoto.
+
+O que você vai fazer
+- Criar e manter APIs para o nosso app de pagamentos
+- Escrever testes e revisar código do time
+- Participar das cerimônias do time (daily, planning)
+
+Requisitos
+- Experiência com Python
+- Conhecimento em FastAPI
+- Experiência com banco de dados PostgreSQL
+- Testes automatizados
+- Git
+
+Diferenciais
+- Docker
+- Kubernetes
+- Mensageria com RabbitMQ
+
+Benefícios: vale-refeição, plano de saúde, auxílio home office.
+Modelo: remoto. Faixa salarial: R$ 4.500 a R$ 6.000.

@@ -1,0 +1,58 @@
+{
+  "summary": "Desenvolvedora backend com foco em Python e APIs REST.",
+  "experiences": [
+    {
+      "title": "Desenvolvedora Backend",
+      "company": "Loja Exemplo Ltda",
+      "period": "mar/2024 - atual",
+      "activities": [
+        "Desenvolvimento de APIs REST com Python e FastAPI",
+        "Modelagem de banco de dados PostgreSQL",
+        "Testes automatizados com pytest",
+        "Containers com Docker para o ambiente de desenvolvimento",
+        "Integração contínua com GitHub Actions"
+      ]
+    },
+    {
+      "title": "Estagiária de Desenvolvimento",
+      "company": "Agência Fictícia Digital",
+      "period": "jan/2023 - fev/2024",
+      "activities": [
+        "Telas em React com JavaScript",
+        "Manutenção de sites em HTML e CSS",
+        "Consultas SQL para relatórios internos"
+      ]
+    }
+  ],
+  "skills": [
+    {"category": "Linguagens", "items": ["Python", "JavaScript", "SQL"]},
+    {"category": "Frameworks", "items": ["FastAPI", "Django", "React"]},
+    {"category": "Bancos de dados", "items": ["PostgreSQL", "Redis"]},
+    {"category": "Ferramentas", "items": ["Git", "Docker", "Linux", "pytest"]},
+    {"category": "Dados", "items": ["pandas"]}
+  ],
+  "projects": [
+    {
+      "name": "Chatbot de FAQ",
+      "description": "Assistente que responde perguntas sobre documentos usando a API do Claude e busca por similaridade.",
+      "technologies": ["Python", "Anthropic API", "FastAPI"],
+      "link": null
+    },
+    {
+      "name": "Painel de gastos pessoais",
+      "description": "Painel que organiza gastos a partir de planilhas.",
+      "technologies": ["Python", "pandas", "Streamlit"],
+      "link": null
+    }
+  ],
+  "education": [
+    {"institution": "Universidade Exemplo", "degree": "Bacharelado em Ciência da Computação", "period": "2019 - 2023"}
+  ],
+  "certifications": [
+    {"name": "AWS Certified Cloud Practitioner", "issuer": "Amazon Web Services", "year": "2024"}
+  ],
+  "languages": [
+    {"language": "Português", "level": "Nativo"},
+    {"language": "Inglês", "level": "Intermediário"}
+  ]
+}

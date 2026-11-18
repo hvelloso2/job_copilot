@@ -1,0 +1,21 @@
+Banco Horizonte | Desenvolvedor(a) Java Pleno | Híbrido - São Paulo/SP
+
+Estamos modernizando nossos sistemas de crédito e buscamos uma pessoa desenvolvedora pleno para o time de Plataforma.
+
+Responsabilidades:
+• Desenvolver microsserviços de crédito
+• Integrar sistemas legados
+• Garantir qualidade e observabilidade dos serviços
+
+Requisitos obrigatórios:
+• 3+ anos de experiência com Java
+• Spring Boot
+• Arquitetura de microsserviços
+• Banco de dados Oracle
+• Mensageria com Kafka
+
+Desejável:
+• AWS
+• Kubernetes
+
+Oferecemos: PLR, previdência privada, Gympass.

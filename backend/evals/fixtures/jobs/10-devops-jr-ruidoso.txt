@@ -1,0 +1,33 @@
+Início  Vagas  Empresas  Entrar  Cadastre-se
+< Voltar para a busca
+
+Nuvem Clara
+DevOps Júnior
+Remoto · Tempo integral · Publicada há 3 dias
+[Candidatar-se]  [Salvar vaga]  [Compartilhar]
+
+Sobre a empresa
+A Nuvem Clara oferece hospedagem gerenciada para e-commerces.
+
+Responsabilidades
+- Automatizar a infraestrutura dos clientes
+- Manter pipelines de deploy
+- Atender incidentes em horário comercial
+
+Requisitos
+- Linux
+- Docker
+- CI/CD
+- Shell script
+- Cloud AWS
+- Terraform
+
+Diferenciais
+- Kubernetes
+- Monitoramento com Prometheus e Grafana
+
+Benefícios: plano de saúde, auxílio internet, 13º e férias.
+
+[Candidatar-se]
+Vagas parecidas: SRE Pleno · Analista de Infraestrutura · DevOps Pleno
+Política de privacidade · Termos de uso · © 2026

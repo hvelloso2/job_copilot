@@ -1,0 +1,23 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "Python", "match": ["python"]},
+    {"text": "SQL", "match": ["sql"]},
+    {"text": "Apache Spark", "match": ["spark"]},
+    {"text": "Apache Airflow", "match": ["airflow"]},
+    {"text": "Modelagem de data warehouse", "match": ["warehouse"]},
+    {"text": "Experiência com AWS", "match": ["aws"]}
+  ],
+  "preferred": [
+    {"text": "dbt", "match": ["dbt"]},
+    {"text": "Terraform", "match": ["terraform"]}
+  ],
+  "analysis": [
+    {"match": ["python"], "expected": "meets"},
+    {"match": ["spark"], "expected": "missing"},
+    {"match": ["airflow"], "expected": "missing"},
+    {"match": ["dbt"], "expected": "missing"},
+    {"match": ["terraform"], "expected": "missing"}
+  ]
+}

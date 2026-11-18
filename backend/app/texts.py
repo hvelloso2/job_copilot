@@ -7,9 +7,13 @@ this module decides which ones are supported, using the same rules as the job an
 A whole-text scan also catches skills and numbers in sentences the model did not list.
 """
 
+import json
 import re
+from typing import Any
 
 from app.analysis import ProfileIndex, mentions_word, normalize, unsupported_terms
+from app.llm.client import LLMClient
+from app.llm.prompts import load_prompt
 from app.llm.schemas import ClaimList, JobData
 from app.schemas import ClaimResult
 
@@ -87,3 +91,22 @@ def text_warnings(text: str, track: JobData, index: ProfileIndex, claims: list[C
     terms = unsupported_terms(PLACEHOLDER_RE.sub(" ", text), [], track.technologies, index)
     flagged = " ".join(normalize(c.claim) for c in claims if not c.supported)
     return [t for t in terms if not mentions_word(flagged, t)]
+
+
+def audit_text(
+    llm: LLMClient, text: str, track: JobData, profile_data: dict[str, Any]
+) -> tuple[list[ClaimResult], list[str]]:
+    """Full second verification: the model lists the claims, the code checks them and scans the text.
+
+    Returns the checked claims and the warnings (skills/numbers outside the claims).
+    """
+    profile_json = json.dumps(profile_data, ensure_ascii=False, indent=1)
+    claims = llm.create_structured(
+        "extract_claims",
+        ClaimList,
+        system=load_prompt("extract_claims"),
+        messages=[{"role": "user", "content": f"<perfil>\n{profile_json}\n</perfil>\n\n<texto>\n{text}\n</texto>"}],
+    )
+    index = ProfileIndex(profile_data)
+    checked = verify_claims(text, claims, track, index)
+    return checked, text_warnings(text, track, index, checked)

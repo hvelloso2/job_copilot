@@ -1,0 +1,24 @@
+{
+  "reviewed": false,
+  "tracks": 1,
+  "required": [
+    {"text": "3+ years building web applications", "match": ["web app", "aplicações web", "aplicacoes web"]},
+    {"text": "Node.js", "match": ["node"]},
+    {"text": "React", "match": ["react"]},
+    {"text": "TypeScript", "match": ["typescript"]},
+    {"text": "PostgreSQL", "match": ["postgres"]},
+    {"text": "Fluent English", "match": ["english", "ingles"]}
+  ],
+  "preferred": [
+    {"text": "GraphQL", "match": ["graphql"]},
+    {"text": "AWS", "match": ["aws"]},
+    {"text": "Docker", "match": ["docker"]}
+  ],
+  "analysis": [
+    {"match": ["react"], "expected": "meets"},
+    {"match": ["postgres"], "expected": "meets"},
+    {"match": ["docker"], "expected": "meets"},
+    {"match": ["node"], "expected": "missing"},
+    {"match": ["graphql"], "expected": "missing"}
+  ]
+}

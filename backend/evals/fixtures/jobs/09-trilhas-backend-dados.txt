@@ -1,0 +1,15 @@
+Programa Jovens Talentos 2027 — Grupo Atlas
+
+O Grupo Atlas abre duas vagas no programa, com trilhas diferentes. Escolha uma trilha ao se candidatar. Modelo híbrido em Recife/PE.
+
+Requisito para as duas trilhas: inglês intermediário.
+
+Trilha 1: Desenvolvedor(a) Backend Júnior
+Requisitos: Python, Django, PostgreSQL.
+Diferencial: Redis.
+
+Trilha 2: Analista de Dados Júnior
+Requisitos: SQL, Power BI, Excel.
+Diferencial: Python.
+
+Benefícios: mentoria, bolsa de estudos de idiomas, vale-refeição.

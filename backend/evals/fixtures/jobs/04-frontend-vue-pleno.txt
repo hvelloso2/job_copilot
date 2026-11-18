@@ -1,0 +1,9 @@
+Vaga: Front-end Pleno (Vue) — Agenda Fácil
+
+A Agenda Fácil é uma plataforma de agendamento para clínicas. Nosso time de produto é remoto e espalhado pelo Brasil.
+
+Procuramos alguém com sólida experiência em Vue.js e TypeScript, que já tenha trabalhado com gerenciamento de estado (Pinia ou Vuex) e escrito testes unitários. É importante dominar HTML semântico, CSS e acessibilidade web. Será um plus se você conhecer Nuxt e tiver experiência com design systems.
+
+No dia a dia você vai evoluir nosso painel de agendamento, melhorar a performance das telas e ajudar a definir padrões de front-end.
+
+Trabalho remoto, contratação CLT, salário entre R$ 8.000 e R$ 10.000.
