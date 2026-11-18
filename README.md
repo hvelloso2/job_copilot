@@ -54,7 +54,7 @@ Esta seção descreve só o que já existe no código e é atualizada a cada eta
    - `GeneratedText`: textos gerados por vaga (resumo, carta ou resposta).
    - Ao apagar uma vaga, a candidatura, as análises e os textos dela são apagados junto.
 4. **Cliente do Claude** ([backend/app/llm/client.py](backend/app/llm/client.py)): uma camada fina sobre o SDK oficial `anthropic` que:
-   - usa sempre o modelo configurado;
+   - usa sempre o modelo configurado, que pode ser diferente por operação (`ANTHROPIC_MODELS`, escolhido com base na avaliação da Etapa 8);
    - registra tokens de entrada e saída e o tempo de cada chamada, base para medir o custo depois;
    - pode receber um SDK falso, para que os testes nunca chamem a API real;
    - opcionalmente liga o *fallback* do servidor (`ANTHROPIC_FALLBACKS=default`): se o modelo recusar um pedido, a API refaz o pedido em outro modelo.
@@ -205,6 +205,7 @@ Abra o `backend/.env` e preencha:
 |---|---|---|
 | `ANTHROPIC_API_KEY` | Sua chave da API | `sk-ant-...` |
 | `ANTHROPIC_MODEL` | Modelo do Claude usado | `claude-opus-5-5` |
+| `ANTHROPIC_MODELS` | Opcional: modelo por operação; as que não aparecem usam `ANTHROPIC_MODEL` | `extract_job=claude-haiku-5-5,analyze_job=claude-haiku-5-5,generate_text=claude-sonnet-5-5,extract_claims=claude-sonnet-5-5` |
 | `ANTHROPIC_FALLBACKS` | `default` liga o fallback em caso de recusa; vazio desliga | `default` |
 | `DATABASE_URL` | Onde fica o banco SQLite | `sqlite:///../data/job_copilot.db` |
 

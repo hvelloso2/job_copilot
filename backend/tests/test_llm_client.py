@@ -37,6 +37,38 @@ def test_fallbacks_use_beta_endpoint() -> None:
     sdk.messages.create.assert_not_called()
 
 
+def test_operation_models_override_the_default_model() -> None:
+    sdk = MagicMock()
+    sdk.messages.create.return_value = fake_response()
+    settings = make_settings(anthropic_models=" extract_job = cheap-model , extract_claims=mid-model ")
+    client = LLMClient(settings=settings, sdk=sdk)
+
+    for op in ("extract_job", "extract_claims", "generate_text"):
+        client.create_message(op, messages=[])
+
+    used = [c.kwargs["model"] for c in sdk.messages.create.call_args_list]
+    assert used == ["cheap-model", "mid-model", "test-model"]
+
+
+def test_malformed_operation_models_raise() -> None:
+    with pytest.raises(ValueError, match="ANTHROPIC_MODELS"):
+        LLMClient(settings=make_settings(anthropic_models="extract_job"), sdk=MagicMock())
+
+
+def test_haiku_skips_fallbacks() -> None:
+    sdk = MagicMock()
+    sdk.messages.create.return_value = fake_response()
+    sdk.beta.messages.create.return_value = fake_response()
+    settings = make_settings(anthropic_fallbacks="default", anthropic_models="extract_job=claude-haiku-5-5")
+    client = LLMClient(settings=settings, sdk=sdk)
+
+    client.create_message("extract_job", messages=[])
+    client.create_message("analyze_job", messages=[])
+
+    assert sdk.messages.create.call_args.kwargs["model"] == "claude-haiku-5-5"
+    assert sdk.beta.messages.create.call_args.kwargs["model"] == "test-model"
+
+
 def test_missing_model_raises() -> None:
     with pytest.raises(ValueError):
         LLMClient(settings=make_settings(anthropic_model=""), sdk=MagicMock())

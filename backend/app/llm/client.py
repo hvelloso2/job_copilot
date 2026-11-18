@@ -1,6 +1,6 @@
 """Thin wrapper around the Anthropic SDK.
 
-- The model always comes from settings (ANTHROPIC_MODEL), never hardcoded.
+- The model always comes from settings (ANTHROPIC_MODEL, or ANTHROPIC_MODELS per operation), never hardcoded.
 - Every call records token usage and latency in `self.calls`, for cost tracking and evals.
 - Tests replace the underlying SDK client (or the whole LLMClient) with a mock.
 """
@@ -43,34 +43,45 @@ class LLMClient:
     sdk: Any = None  # anthropic.Anthropic or a mock
     calls: list[CallRecord] = field(default_factory=list)
 
+    operation_models: dict[str, str] = field(init=False, default_factory=dict)
+
     def __post_init__(self) -> None:
         if not self.settings.anthropic_model:
             raise ValueError("ANTHROPIC_MODEL is not set")
+        self.operation_models = self.settings.operation_models()
         if self.sdk is None:
             self.sdk = anthropic.Anthropic(api_key=self.settings.anthropic_api_key or None)
 
     @property
     def model(self) -> str:
+        """Default model (ANTHROPIC_MODEL)."""
         return self.settings.anthropic_model
 
+    def model_for(self, operation: str) -> str:
+        """ANTHROPIC_MODELS entry for this operation, else ANTHROPIC_MODEL."""
+        return self.operation_models.get(operation, self.model)
+
     def create_message(self, operation: str, **kwargs: Any) -> Any:
-        """Calls messages.create with the configured model and records usage/latency."""
+        """Calls messages.create with the operation's model and records usage/latency."""
         kwargs.setdefault("max_tokens", 16000)
+        model = self.model_for(operation)
+        # Haiku models don't support the server-side fallback beta.
+        fallbacks = "" if model.startswith("claude-haiku") else self.settings.anthropic_fallbacks
         start = time.perf_counter()
-        if self.settings.anthropic_fallbacks:
+        if fallbacks:
             response = self.sdk.beta.messages.create(
-                model=self.model,
+                model=model,
                 betas=[FALLBACK_BETA],
-                fallbacks=self.settings.anthropic_fallbacks,
+                fallbacks=fallbacks,
                 **kwargs,
             )
         else:
-            response = self.sdk.messages.create(model=self.model, **kwargs)
+            response = self.sdk.messages.create(model=model, **kwargs)
         duration = time.perf_counter() - start
 
         record = CallRecord(
             operation=operation,
-            model=getattr(response, "model", self.model),
+            model=getattr(response, "model", model),
             input_tokens=response.usage.input_tokens,
             output_tokens=response.usage.output_tokens,
             duration_s=duration,

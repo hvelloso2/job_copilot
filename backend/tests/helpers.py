@@ -15,7 +15,7 @@ def fake_response(text: str = "", stop_reason: str = "end_turn", input_tokens: i
 
 
 def make_settings(**overrides) -> Settings:
-    base = {"anthropic_api_key": "k", "anthropic_model": "test-model", "anthropic_fallbacks": ""}
+    base = {"anthropic_api_key": "k", "anthropic_model": "test-model", "anthropic_fallbacks": "", "anthropic_models": ""}
     return Settings(**{**base, **overrides})
 
 
