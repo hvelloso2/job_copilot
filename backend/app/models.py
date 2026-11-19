@@ -106,3 +106,41 @@ class GeneratedText(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     job: Mapped[Job] = relationship(back_populates="generated_texts")
+
+
+class LeadStatus(str, enum.Enum):
+    NEW = "new"              # nova: veio de um e-mail de alerta, ainda não vista
+    IMPORTED = "imported"    # importada: a vaga foi enviada pela extensão do navegador
+    DISMISSED = "dismissed"  # descartada
+
+
+class AlertEmail(Base):
+    """A job alert email already read, so it is never read (and paid for) twice."""
+
+    __tablename__ = "alert_emails"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    message_id: Mapped[str] = mapped_column(String(500), unique=True)
+    sender: Mapped[str] = mapped_column(String(300), default="")
+    subject: Mapped[str] = mapped_column(String(500), default="")
+    received_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    leads_found: Mapped[int] = mapped_column(Integer, default=0)
+    read_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class JobLead(Base):
+    """A posting announced in a job alert email: only title, company, location and link.
+    The full text comes later, when the user opens the link and sends the page with the extension."""
+
+    __tablename__ = "job_leads"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    url: Mapped[str] = mapped_column(String(1000), unique=True)  # canonical_job_url
+    title: Mapped[str] = mapped_column(String(300))
+    company: Mapped[str] = mapped_column(String(200), default="")
+    location: Mapped[str] = mapped_column(String(200), default="")
+    source: Mapped[str] = mapped_column(String(200), default="")  # sender domain, e.g. "linkedin.com"
+    status: Mapped[LeadStatus] = mapped_column(Enum(LeadStatus), default=LeadStatus.NEW)
+    received_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    job_id: Mapped[int | None] = mapped_column(Integer, nullable=True)  # no FK: the job may be deleted
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

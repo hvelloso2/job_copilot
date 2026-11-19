@@ -34,7 +34,7 @@ export default function BoardPage() {
       {loading && jobs.length === 0 && <Loading message="Carregando vagas…" />}
       {!loading && !error && jobs.length === 0 && (
         <div className="rounded-xl border border-dashed bg-background p-8 text-center text-sm text-muted-foreground">
-          Nenhuma vaga ainda. Clique em <strong>Nova vaga</strong> e cole o texto de uma vaga para começar.
+          Nenhuma vaga ainda. Clique em <strong>Nova vaga</strong> e cole o texto de uma vaga, ou abra a vaga no site e clique na extensão <strong>job-copilot</strong> do navegador.
         </div>
       )}
       {jobs.length > 0 && <KanbanBoard jobs={jobs} onMove={handleMove} />}

@@ -156,6 +156,17 @@ class ClaimList(_Strict):
     claims: list[Claim]
 
 
+class FoundPosting(_Strict):
+    link: int = Field(description="Number of the link in the list, e.g. 12 for [12].")
+    title: str = Field(description="Job title, copied from the link text.")
+    company: str | None
+    location: str | None
+
+
+class FoundPostings(_Strict):
+    postings: list[FoundPosting]
+
+
 def strict_json_schema(model: type[BaseModel]) -> dict[str, Any]:
     """JSON Schema for structured outputs: every object closed and every property required.
 

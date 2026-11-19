@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "job-copilot",
+  "version": "1.0.0",
+  "description": "Envia a vaga aberta no navegador para o job-copilot (rodando no seu computador).",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["http://localhost:8000/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Enviar esta vaga para o job-copilot" }
+}

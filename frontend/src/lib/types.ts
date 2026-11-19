@@ -215,3 +215,36 @@ export interface Insights {
   funnel: FunnelStep[]
   scores_by_status: StatusScore[]
 }
+
+// job alert emails
+
+export type LeadStatus = 'new' | 'imported' | 'dismissed'
+
+/** A posting announced in a job alert email (title, company, location and link only). */
+export interface Lead {
+  id: number
+  url: string
+  title: string
+  company: string
+  location: string
+  source: string
+  status: LeadStatus
+  received_at: string | null
+  job_id: number | null
+}
+
+export interface AlertsStatus {
+  configured: boolean
+  mailbox: string
+  senders: string[]
+  days: number
+  emails_read: number
+  last_read_at: string | null
+}
+
+export interface AlertCheck {
+  emails_read: number
+  leads_new: number
+  leads_known: number
+  errors: string[]
+}

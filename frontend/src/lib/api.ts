@@ -1,9 +1,13 @@
 import type {
+  AlertCheck,
+  AlertsStatus,
   AnalysisOut,
   Insights,
   ApplicationStatus,
   JobOut,
   JobSummary,
+  Lead,
+  LeadStatus,
   ProfileData,
   ProfileDraft,
   ProfileOut,
@@ -113,4 +117,11 @@ export const api = {
 
   // dashboard
   getInsights: () => request<Insights>('/insights'),
+
+  // job alert emails
+  getAlerts: () => request<AlertsStatus>('/alerts'),
+  checkAlerts: () => request<AlertCheck>('/alerts/check', { method: 'POST' }),
+  listLeads: (status?: LeadStatus) => request<Lead[]>(status ? `/leads?status=${status}` : '/leads'),
+  updateLead: (id: number, status: 'new' | 'dismissed') =>
+    request<Lead>(`/leads/${id}`, { method: 'PATCH', body: json({ status }) }),
 }

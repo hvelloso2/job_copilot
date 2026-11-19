@@ -14,6 +14,23 @@ class Settings(BaseSettings):
     anthropic_fallbacks: str = ""
     database_url: str = "sqlite:///../data/job_copilot.db"
 
+    # Job alert emails (IMAP). With Gmail: IMAP on and an app password (not the account password).
+    imap_host: str = "imap.gmail.com"
+    imap_user: str = ""
+    imap_password: str = ""
+    imap_folder: str = "INBOX"
+    # Only emails from these domains are read (job alerts of each site)
+    alert_senders: str = "linkedin.com,indeed.com,gupy.io,catho.com.br,infojobs.com.br,vagas.com.br,glassdoor.com"
+    alert_days: int = 14         # how far back to look
+    alert_max_emails: int = 20   # new emails read per check (each one is a Claude call)
+
+    def alert_sender_list(self) -> list[str]:
+        return [s.strip().lower() for s in self.alert_senders.split(",") if s.strip()]
+
+    @property
+    def imap_configured(self) -> bool:
+        return bool(self.imap_host and self.imap_user and self.imap_password)
+
     def operation_models(self) -> dict[str, str]:
         """Parses ANTHROPIC_MODELS. Raises ValueError on a malformed entry."""
         result: dict[str, str] = {}

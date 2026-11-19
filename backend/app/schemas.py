@@ -6,7 +6,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from app.llm.schemas import JobData, ProfileData, RequirementStatus
-from app.models import ApplicationStatus, TextFormat, TextType
+from app.models import ApplicationStatus, LeadStatus, TextFormat, TextType
 
 
 class ProfileDraft(BaseModel):
@@ -200,3 +200,47 @@ class Insights(BaseModel):
     top_gaps: list[SkillDemand] = Field(description="Skills mais pedidas que não estão no perfil.")
     funnel: list[FunnelStep]
     scores_by_status: list[StatusScore]
+
+
+class PageImport(BaseModel):
+    """A job page sent by the browser extension: what the user is seeing."""
+    url: str = Field(min_length=1, max_length=2000)
+    title: str = Field(default="", max_length=500, description="Título da aba.")
+    text: str = Field(min_length=1, max_length=50_000, description="Texto da página (ou o trecho selecionado).")
+
+
+class PageImportOut(BaseModel):
+    job_id: int
+    created: bool = Field(description="False se a vaga já estava no quadro (nada foi extraído de novo).")
+
+
+class AlertsStatus(BaseModel):
+    configured: bool
+    mailbox: str = Field(description="Conta e pasta lidas, ex.: voce@gmail.com / INBOX. Vazio se não configurado.")
+    senders: list[str]
+    days: int
+    emails_read: int = Field(description="E-mails de alerta já lidos desde o início.")
+    last_read_at: datetime | None
+
+
+class AlertCheckOut(BaseModel):
+    emails_read: int
+    leads_new: int
+    leads_known: int = Field(description="Vagas que já estavam na lista por um e-mail anterior.")
+    errors: list[str]
+
+
+class LeadOut(BaseModel):
+    id: int
+    url: str
+    title: str
+    company: str
+    location: str
+    source: str
+    status: LeadStatus
+    received_at: datetime | None
+    job_id: int | None
+
+
+class LeadUpdate(BaseModel):
+    status: Literal[LeadStatus.NEW, LeadStatus.DISMISSED]

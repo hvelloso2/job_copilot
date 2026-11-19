@@ -1,32 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.database import get_db
 from app.dependencies import get_llm_client, llm_errors_as_http
 from app.llm.client import LLMClient
-from app.llm.prompts import load_prompt
-from app.llm.schemas import JobData, JobExtraction
-from app.models import Application, ApplicationStatus, Job
+from app.job_urls import canonical_job_url
+from app.models import Application, ApplicationStatus, Job, JobLead, LeadStatus
+from app.pipeline import apply_track, extract_job
 from app.queries import get_job_or_404
-from app.schemas import ApplicationUpdate, JobCreate, JobOut, JobSummary, TrackChoice
+from app.schemas import ApplicationUpdate, JobCreate, JobOut, JobSummary, PageImport, PageImportOut, TrackChoice
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
-
-# Job.extracted = {"tracks": [JobData, ...], "selected_track": int | None}
-# A posting with a single track is selected automatically; with several, the user picks one.
-
-
-def _apply_track(job: Job, index: int | None) -> None:
-    tracks = [JobData.model_validate(t) for t in job.extracted["tracks"]]
-    job.extracted = {**job.extracted, "selected_track": index}
-    if index is not None:
-        job.company = tracks[index].company or ""
-        job.title = tracks[index].title
-    else:
-        job.company = next((t.company for t in tracks if t.company), "") or ""
-        job.title = " | ".join(t.title for t in tracks)
-
 
 def _latest_score(job: Job) -> int | None:
     if not job.analyses:
@@ -69,25 +54,35 @@ def create_job(
         raise HTTPException(status_code=422, detail="Cole o texto da vaga.")
 
     with llm_errors_as_http():
-        extraction = llm.create_structured(
-            "extract_job",
-            JobExtraction,
-            system=load_prompt("extract_job"),
-            messages=[{"role": "user", "content": f"<vaga>\n{text}\n</vaga>"}],
-        )
-
-    job = Job(
-        raw_text=text,
-        url=(payload.url or "").strip() or None,
-        extracted={"tracks": [t.model_dump() for t in extraction.tracks], "selected_track": None},
-    )
-    _apply_track(job, 0 if len(extraction.tracks) == 1 else None)
-    application = Application(job=job)
-    application.set_status(ApplicationStatus.SAVED)
+        job = extract_job(llm, text, (payload.url or "").strip() or None)
     db.add(job)
     db.commit()
     db.refresh(job)
     return _to_out(job)
+
+
+@router.post("/import", response_model=PageImportOut, status_code=201)
+def import_page(
+    payload: PageImport, response: Response, db: Session = Depends(get_db), llm: LLMClient = Depends(get_llm_client)
+) -> PageImportOut:
+    """Saves the job page sent by the browser extension (what the user is seeing; no scraping).
+    The same posting is never extracted twice: if it is already on the board, that job is returned (200)."""
+    url = canonical_job_url(payload.url)
+    job_id = db.scalar(select(Job.id).where(Job.url.in_({url, payload.url.strip()})))
+    created = job_id is None
+    if created:
+        text = f"Título da página: {payload.title.strip()}\nEndereço: {url}\n\n{payload.text.strip()}"
+        with llm_errors_as_http():
+            job = extract_job(llm, text, url)
+        db.add(job)
+        db.flush()
+        job_id = job.id
+    else:
+        response.status_code = 200
+    # The posting may have come from a job alert email: it is no longer "new" there.
+    db.execute(update(JobLead).where(JobLead.url == url).values(status=LeadStatus.IMPORTED, job_id=job_id))
+    db.commit()
+    return PageImportOut(job_id=job_id, created=created)
 
 
 @router.get("", response_model=list[JobSummary])
@@ -111,7 +106,7 @@ def choose_track(job_id: int, payload: TrackChoice, db: Session = Depends(get_db
     job = get_job_or_404(db, job_id)
     if payload.track >= len(job.extracted["tracks"]):
         raise HTTPException(status_code=422, detail="Essa trilha não existe nesta vaga.")
-    _apply_track(job, payload.track)
+    apply_track(job, payload.track)
     db.commit()
     db.refresh(job)
     return _to_out(job)
